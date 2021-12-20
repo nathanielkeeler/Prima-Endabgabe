@@ -1,1 +1,11 @@
-{}
+{
+  "Graph|2021-12-20T18:00:23.325Z|85852": {
+    "ƒ.Graph": {
+      "name": "Scene",
+      "components": {},
+      "children": [],
+      "idResource": "Graph|2021-12-20T18:00:23.325Z|85852",
+      "type": "Graph"
+    }
+  }
+}
