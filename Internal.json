@@ -3,9 +3,82 @@
     "ƒ.Graph": {
       "name": "Scene",
       "components": {},
-      "children": [],
+      "children": [
+        {
+          "ƒ.Node": {
+            "name": "Player",
+            "components": {
+              "ComponentMesh": [
+                {
+                  "ƒ.ComponentMesh": {
+                    "idMesh": "MeshQuad|2022-01-11T15:16:39.225Z|94524",
+                    "pivot": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[0.8999999761581421, 0.49999991059303284, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentMaterial": [
+                {
+                  "ƒ.ComponentMaterial": {
+                    "sortForAlpha": false,
+                    "clrPrimary": "[1, 1, 1, 1]",
+                    "clrSecondary": "[1, 1, 1, 1]",
+                    "pivot": {
+                      "translation": "[0, 0]",
+                      "rotation": 0,
+                      "scaling": "[1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    },
+                    "idMaterial": "Material|2022-01-11T15:17:09.241Z|97632"
+                  }
+                }
+              ]
+            },
+            "children": []
+          }
+        }
+      ],
       "idResource": "Graph|2021-12-20T18:00:23.325Z|85852",
       "type": "Graph"
+    }
+  },
+  "MeshQuad|2022-01-11T15:16:39.225Z|94524": {
+    "ƒ.MeshQuad": {
+      "idResource": "MeshQuad|2022-01-11T15:16:39.225Z|94524",
+      "name": "MeshQuad",
+      "type": "MeshQuad"
+    }
+  },
+  "Material|2022-01-11T15:17:09.241Z|97632": {
+    "ƒ.Material": {
+      "name": "BirdTex",
+      "idResource": "Material|2022-01-11T15:17:09.241Z|97632",
+      "shader": "ShaderTexture",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2022-01-11T15:17:57.599Z|88301"
+        }
+      }
+    }
+  },
+  "TextureImage|2022-01-11T15:17:57.599Z|88301": {
+    "ƒ.TextureImage": {
+      "url": "images\\sprites\\bird\\skeleton-animation_00.png",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2022-01-11T15:17:57.599Z|88301",
+        "name": "bird.png",
+        "mipmap": "CRISP"
+      }
     }
   }
 }
