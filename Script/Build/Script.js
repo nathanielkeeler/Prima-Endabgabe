@@ -40,14 +40,24 @@ var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
     ƒ.Debug.info("Main Program Template running!");
+    let root;
     let viewport;
+    let player;
+    let playerBody;
+    let ctrFlap = new ƒ.Control("Flap", 3, 0 /* PROPORTIONAL */);
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         viewport = _event.detail;
+        root = ƒ.Project.resources["Graph|2021-12-20T18:00:23.325Z|85852"];
+        player = root.getChildrenByName("Player")[0];
+        playerBody = player.getComponent(ƒ.ComponentRigidbody);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
-        // ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+        ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
+        let flap = ƒ.Keyboard.mapToValue(1, 0, [ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.ARROW_UP, ƒ.KEYBOARD_CODE.S]);
+        ctrFlap.setInput(flap);
+        playerBody.applyForce(ƒ.Vector3.SCALE(player.mtxLocal.getY(), ctrFlap.getOutput()));
         ƒ.Physics.world.simulate(); // if physics is included and used
         viewport.draw();
         ƒ.AudioManager.default.update();
