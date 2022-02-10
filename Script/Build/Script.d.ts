@@ -8,6 +8,18 @@ declare namespace Script {
     }
 }
 declare namespace FlappyBug {
+    import ƒ = FudgeCore;
+    class EnemyScript extends ƒ.ComponentScript {
+        static readonly iSubclass: number;
+        message: string;
+        speedEnemyTranslation: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        update: (_event: Event) => void;
+        checkCollision(_pos: ƒ.Vector3, _radius: number): boolean;
+    }
+}
+declare namespace FlappyBug {
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
