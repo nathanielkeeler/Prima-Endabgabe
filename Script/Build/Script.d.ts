@@ -9,3 +9,9 @@ declare namespace Script {
 }
 declare namespace FlappyBug {
 }
+declare namespace FlappyBug {
+    import ƒ = FudgeCore;
+    class Player extends ƒ.Node {
+        constructor();
+    }
+}

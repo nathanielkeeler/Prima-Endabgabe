@@ -44,7 +44,11 @@ var FlappyBug;
     let viewport;
     let player;
     // let playerBody: ƒ.ComponentRigidbody;
-    let ctrFlap = new ƒ.Control("Flap", 1, 0 /* PROPORTIONAL */);
+    let gravity = 0.0001;
+    let gravitySpeed = 0;
+    let fps = 144;
+    let ctrFlap = new ƒ.Control("Flap", 4, 0 /* PROPORTIONAL */);
+    ctrFlap.setDelay(100);
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         viewport = _event.detail;
@@ -52,15 +56,37 @@ var FlappyBug;
         player = root.getChildrenByName("Player")[0];
         // playerBody = player.getComponent(ƒ.ComponentRigidbody);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
-        ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, fps); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
-        // let flap: number = ƒ.Keyboard.mapToValue(1, 0, [ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.ARROW_UP, ƒ.KEYBOARD_CODE.S]);
+        let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+        gravitySpeed += gravity;
+        let flap = ƒ.Keyboard.mapToValue(1, 0, [ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.ARROW_UP, ƒ.KEYBOARD_CODE.S]);
         // ctrFlap.setInput(flap);
+        ctrFlap.setInput(flap * deltaTime);
+        player.mtxLocal.translateY(ctrFlap.getOutput() - gravitySpeed);
         // playerBody.applyForce(ƒ.Vector3.SCALE(player.mtxLocal.getY(), ctrFlap.getOutput()));
         // ƒ.Physics.world.simulate();  // if physics is included and used
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
+    function accelerate(n) {
+        gravity = n;
+    }
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
+    var ƒ = FudgeCore;
+    class Player extends ƒ.Node {
+        constructor() {
+            super("Player");
+            this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshQuad("MeshPlayer")));
+            this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("MtrPlayer", ƒ.ShaderTexture)));
+            this.addComponent(new ƒ.ComponentTransform);
+            // this.mtxLocal.scale(new ƒ.Vector3(0.2, 0.4, 0));
+            this.getComponent(ƒ.ComponentMesh).mtxPivot.scale(new ƒ.Vector3(0.2, 0.3, 0));
+        }
+    }
+    FlappyBug.Player = Player;
 })(FlappyBug || (FlappyBug = {}));
 //# sourceMappingURL=Script.js.map
