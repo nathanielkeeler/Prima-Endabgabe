@@ -77,11 +77,11 @@ var FlappyBug;
         };
         checkCollision(_pos, _radius) {
             let enemy = this.node;
-            let mtxMeshPivot = enemy.getComponent(ƒ.ComponentMesh).mtxPivot;
+            let enemyMeshPivot = enemy.getComponent(ƒ.ComponentMesh).mtxPivot;
             let posLocal = ƒ.Vector3.TRANSFORMATION(_pos, enemy.mtxWorldInverse, true);
-            if (posLocal.y < -_radius || posLocal.y > mtxMeshPivot.scaling.y + _radius || posLocal.x < -mtxMeshPivot.scaling.x / 2 - _radius || posLocal.x > mtxMeshPivot.scaling.x / 2 + _radius)
-                return true;
-            return false;
+            if (posLocal.y < -_radius || posLocal.y > enemyMeshPivot.scaling.y + _radius || posLocal.x < -enemyMeshPivot.scaling.x / 2 - _radius || posLocal.x > enemyMeshPivot.scaling.x / 2 + _radius)
+                return false;
+            return true;
         }
     }
     FlappyBug.EnemyScript = EnemyScript;
@@ -95,40 +95,41 @@ var FlappyBug;
     let player;
     // let playerBody: ƒ.ComponentRigidbody;
     let enemies;
+    let sky;
+    let ground;
+    let matSky;
+    let matGround;
     let gravity = 0.01;
-    let fps = 144;
+    let fps = 100;
     let ctrFlap = new ƒ.Control("Flap", 4, 0 /* PROPORTIONAL */);
     ctrFlap.setDelay(100);
     document.addEventListener("interactiveViewportStarted", start);
     async function start(_event) {
         viewport = _event.detail;
-        root = ƒ.Project.resources["Graph|2021-12-20T18:00:23.325Z|85852"];
-        player = root.getChildrenByName("Player")[0];
-        // playerBody = player.getComponent(ƒ.ComponentRigidbody);
-        enemies = root.getChildrenByName("Enemies")[0];
-        let graphEnemy = FudgeCore.Project.resources["Graph|2022-02-10T16:15:03.308Z|86091"];
-        for (let i = 0; i < 2; i++) {
+        getNodesFromGraph();
+        let graphEnemy = FudgeCore.Project.resources["Graph|2022-02-10T16:40:52.309Z|18989"];
+        for (let i = 0; i < 4; i++) {
             let enemy = await ƒ.Project.createGraphInstance(graphEnemy);
             enemy.addEventListener("graphEvent", hndGraphEvent, true);
             enemies.addChild(enemy);
-            enemy.mtxLocal.translateY(-1);
-            if (i % 2 == 0)
-                enemy.getComponent(FlappyBug.EnemyScript).speedEnemyTranslation *= 50;
+            enemy.mtxLocal.translateY(-1 - i / 2);
+            enemy.getComponent(FlappyBug.EnemyScript).speedEnemyTranslation *= randFloat(1.1, 1.4);
         }
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, fps); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
         let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+        matSky.mtxPivot.translateX(0.05 * deltaTime);
+        matGround.mtxPivot.translateX(0.25 * deltaTime);
         let flap = ƒ.Keyboard.mapToValue(1, 0, [ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.ARROW_UP, ƒ.KEYBOARD_CODE.S]);
-        // ctrFlap.setInput(flap);
         ctrFlap.setInput(flap * deltaTime);
         player.mtxLocal.translateY(ctrFlap.getOutput() - gravity);
         // playerBody.applyForce(ƒ.Vector3.SCALE(player.mtxLocal.getY(), ctrFlap.getOutput()));
         // impulse
         // world up vector instead node vector
         for (let enemy of enemies.getChildren()) {
-            if (enemy.getComponent(FlappyBug.EnemyScript).checkCollision(player.mtxWorld.translation, 0.35)) {
+            if (enemy.getComponent(FlappyBug.EnemyScript).checkCollision(player.mtxWorld.translation, 0.3)) {
                 console.log("Collision");
                 break;
             }
@@ -136,6 +137,19 @@ var FlappyBug;
         // ƒ.Physics.world.simulate();  // if physics is included and used
         viewport.draw();
         ƒ.AudioManager.default.update();
+    }
+    function getNodesFromGraph() {
+        root = ƒ.Project.resources["Graph|2021-12-20T18:00:23.325Z|85852"];
+        player = root.getChildrenByName("Player")[0];
+        // playerBody = player.getComponent(ƒ.ComponentRigidbody);
+        enemies = root.getChildrenByName("Enemies")[0];
+        sky = root.getChildrenByName("Background")[0].getChildrenByName("Sky")[0];
+        ground = root.getChildrenByName("Background")[0].getChildrenByName("Ground")[0];
+        matSky = sky.getComponent(ƒ.ComponentMaterial);
+        matGround = ground.getComponent(ƒ.ComponentMaterial);
+    }
+    function randFloat(min, max) {
+        return Math.random() * (max - min) + min;
     }
     function hndGraphEvent(_event) {
         console.log("Graph event received", _event.currentTarget);

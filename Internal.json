@@ -323,10 +323,19 @@
                           }
                         }
                       }
+                    ],
+                    "EnemyScript": [
+                      {
+                        "FlappyBug.EnemyScript": {
+                          "active": true,
+                          "message": "EnemyScript added to Enemy",
+                          "speedEnemyTranslation": -1
+                        }
+                      }
                     ]
                   },
                   "children": [],
-                  "idSource": "Graph|2022-02-10T16:15:03.308Z|86091"
+                  "idSource": "Graph|2022-02-10T16:40:52.309Z|18989"
                 }
               }
             ]
@@ -334,6 +343,72 @@
         }
       ],
       "idResource": "Graph|2021-12-20T18:00:23.325Z|85852",
+      "type": "Graph"
+    }
+  },
+  "Graph|2022-02-10T16:40:52.309Z|18989": {
+    "ƒ.Graph": {
+      "name": "Enemy",
+      "components": {
+        "ComponentMesh": [
+          {
+            "ƒ.ComponentMesh": {
+              "idMesh": "MeshQuad|2022-01-11T15:16:39.225Z|94524",
+              "pivot": {
+                "translation": "[2.000000238418579, 0.49999991059303284, 0]",
+                "rotation": "[0, 0, 0]",
+                "scaling": "[0.19999991357326508, 0.16999991238117218, 1]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "ComponentMaterial": [
+          {
+            "ƒ.ComponentMaterial": {
+              "sortForAlpha": false,
+              "clrPrimary": "[1, 0, 0, 1]",
+              "clrSecondary": "[1, 1, 1, 1]",
+              "pivot": {
+                "translation": "[0, 0]",
+                "rotation": 0,
+                "scaling": "[1, 1]"
+              },
+              "Component": {
+                "active": true
+              },
+              "idMaterial": "Material|2022-01-12T11:50:21.217Z|17200"
+            }
+          }
+        ],
+        "ComponentTransform": [
+          {
+            "ƒ.ComponentTransform": {
+              "local": {
+                "translation": "[0, 0, 0]",
+                "rotation": "[0, 0, 0]",
+                "scaling": "[1, 1, 1]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
+        ],
+        "EnemyScript": [
+          {
+            "FlappyBug.EnemyScript": {
+              "active": true,
+              "message": "EnemyScript added to Enemy",
+              "speedEnemyTranslation": -1
+            }
+          }
+        ]
+      },
+      "children": [],
+      "idResource": "Graph|2022-02-10T16:40:52.309Z|18989",
       "type": "Graph"
     }
   }

@@ -46,11 +46,11 @@ namespace FlappyBug {
 
     public checkCollision(_pos: ƒ.Vector3, _radius: number): boolean {
       let enemy: ƒ.Node = this.node;
-      let mtxMeshPivot: ƒ.Matrix4x4 = enemy.getComponent(ƒ.ComponentMesh).mtxPivot;
+      let enemyMeshPivot: ƒ.Matrix4x4 = enemy.getComponent(ƒ.ComponentMesh).mtxPivot;
       let posLocal: ƒ.Vector3 = ƒ.Vector3.TRANSFORMATION(_pos, enemy.mtxWorldInverse, true);
-      if (posLocal.y < -_radius || posLocal.y > mtxMeshPivot.scaling.y + _radius || posLocal.x < -mtxMeshPivot.scaling.x / 2 - _radius || posLocal.x > mtxMeshPivot.scaling.x / 2 + _radius)
-        return true;
-      return false;
+      if (posLocal.y < -_radius || posLocal.y > enemyMeshPivot.scaling.y + _radius || posLocal.x < -enemyMeshPivot.scaling.x / 2 - _radius || posLocal.x > enemyMeshPivot.scaling.x / 2 + _radius)
+        return false;
+      return true;
     }
 
     // protected reduceMutator(_mutator: ƒ.Mutator): void {

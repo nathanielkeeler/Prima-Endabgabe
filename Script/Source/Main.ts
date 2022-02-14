@@ -7,34 +7,31 @@ namespace FlappyBug {
   let player: ƒ.Node;
   // let playerBody: ƒ.ComponentRigidbody;
   let enemies: ƒ.Node;
+  let sky: ƒ.Node;
+  let ground: ƒ.Node;
+  let matSky: ƒ.ComponentMaterial;
+  let matGround: ƒ.ComponentMaterial;
   let gravity: number = 0.01;
-
-  let fps: number = 144;
+  let fps: number = 100;
 
   let ctrFlap: ƒ.Control = new ƒ.Control("Flap", 4, ƒ.CONTROL_TYPE.PROPORTIONAL);
   ctrFlap.setDelay(100);
-
+  
   document.addEventListener("interactiveViewportStarted", <EventListener><unknown>start);
 
 
   async function start(_event: CustomEvent): Promise<void> {
     viewport = _event.detail;
 
-    root = <ƒ.Graph>ƒ.Project.resources["Graph|2021-12-20T18:00:23.325Z|85852"];
+    getNodesFromGraph();
 
-    player = root.getChildrenByName("Player")[0];
-    // playerBody = player.getComponent(ƒ.ComponentRigidbody);
-    enemies = root.getChildrenByName("Enemies")[0];
-
-    let graphEnemy: ƒ.Graph = <ƒ.Graph>FudgeCore.Project.resources["Graph|2022-02-10T16:15:03.308Z|86091"];
-
-    for (let i: number = 0; i < 2; i++) {
+    let graphEnemy: ƒ.Graph = <ƒ.Graph>FudgeCore.Project.resources["Graph|2022-02-10T16:40:52.309Z|18989"];
+    for (let i: number = 0; i < 4; i++) {
       let enemy = await ƒ.Project.createGraphInstance(graphEnemy);
       enemy.addEventListener("graphEvent", hndGraphEvent, true);
       enemies.addChild(enemy);
-      enemy.mtxLocal.translateY(-1);
-      if (i % 2 == 0)
-          enemy.getComponent(EnemyScript).speedEnemyTranslation *= 50;
+      enemy.mtxLocal.translateY(-1 - i/2);
+      enemy.getComponent(EnemyScript).speedEnemyTranslation *= randFloat(1.1, 1.4);
     }
 
     ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
@@ -46,8 +43,10 @@ namespace FlappyBug {
 
     let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
 
+    matSky.mtxPivot.translateX(0.05 * deltaTime);
+    matGround.mtxPivot.translateX(0.25 * deltaTime);
+
     let flap: number = ƒ.Keyboard.mapToValue(1, 0, [ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.ARROW_UP, ƒ.KEYBOARD_CODE.S]);
-    // ctrFlap.setInput(flap);
     ctrFlap.setInput(flap * deltaTime);
     player.mtxLocal.translateY(ctrFlap.getOutput() - gravity);
     // playerBody.applyForce(ƒ.Vector3.SCALE(player.mtxLocal.getY(), ctrFlap.getOutput()));
@@ -55,7 +54,7 @@ namespace FlappyBug {
     // world up vector instead node vector
 
     for (let enemy of enemies.getChildren()) {
-      if (enemy.getComponent(EnemyScript).checkCollision(player.mtxWorld.translation, 0.35)) {
+      if (enemy.getComponent(EnemyScript).checkCollision(player.mtxWorld.translation, 0.3)) {
         console.log("Collision");
         break;
       }
@@ -64,6 +63,21 @@ namespace FlappyBug {
     // ƒ.Physics.world.simulate();  // if physics is included and used
     viewport.draw();
     ƒ.AudioManager.default.update();
+  }
+
+  function getNodesFromGraph(): void{
+    root = <ƒ.Graph>ƒ.Project.resources["Graph|2021-12-20T18:00:23.325Z|85852"];
+    player = root.getChildrenByName("Player")[0];
+    // playerBody = player.getComponent(ƒ.ComponentRigidbody);
+    enemies = root.getChildrenByName("Enemies")[0];
+    sky = root.getChildrenByName("Background")[0].getChildrenByName("Sky")[0];
+    ground = root.getChildrenByName("Background")[0].getChildrenByName("Ground")[0];
+    matSky = sky.getComponent(ƒ.ComponentMaterial);
+    matGround = ground.getComponent(ƒ.ComponentMaterial);
+  }
+
+  function randFloat(min, max) {
+    return Math.random() * (max - min) + min;
   }
 
   function hndGraphEvent(_event: Event): void {
