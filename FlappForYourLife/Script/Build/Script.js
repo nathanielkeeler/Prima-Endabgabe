@@ -184,7 +184,7 @@ var FlappyBug;
             // this.mtxLocal.scale(new ƒ.Vector3(0.2, 0.4, 0));
         }
         async loadSounds() {
-            this.flapSound = await ƒ.Audio.load("assets/audio/player/flap.mp3");
+            // this.flapSound = await ƒ.Audio.load("assets/audio/player/flap.mp3");
             this.componentAudio = new ƒ.ComponentAudio(this.flapSound);
             this.addComponent(this.componentAudio);
         }

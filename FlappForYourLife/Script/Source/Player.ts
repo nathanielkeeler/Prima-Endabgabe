@@ -34,7 +34,7 @@ namespace FlappyBug {
         }
 
         private async loadSounds() : Promise<void> {
-            this.flapSound = await ƒ.Audio.load("assets/audio/player/flap.mp3");
+            // this.flapSound = await ƒ.Audio.load("assets/audio/player/flap.mp3");
             this.componentAudio = new ƒ.ComponentAudio(this.flapSound);
             this.addComponent(this.componentAudio);
         }
