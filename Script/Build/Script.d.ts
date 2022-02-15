@@ -24,6 +24,12 @@ declare namespace FlappyBug {
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
     class Player extends ƒ.Node {
+        private health;
+        private componentAudio;
+        private flapSound;
+        private hitSound;
         constructor();
+        private createPlayer;
+        private loadSounds;
     }
 }

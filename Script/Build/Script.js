@@ -93,35 +93,37 @@ var FlappyBug;
     let root;
     let viewport;
     let player;
+    let playerPlaceholderNode;
     // let playerBody: ƒ.ComponentRigidbody;
     let enemies;
+    let enemy;
     let sky;
     let ground;
     let matSky;
     let matGround;
-    let gravity = 0.01;
+    let gravity = 0.015;
     let fps = 100;
     let ctrFlap = new ƒ.Control("Flap", 4, 0 /* PROPORTIONAL */);
-    ctrFlap.setDelay(100);
+    ctrFlap.setDelay(200);
     document.addEventListener("interactiveViewportStarted", start);
     async function start(_event) {
         viewport = _event.detail;
         getNodesFromGraph();
         let graphEnemy = FudgeCore.Project.resources["Graph|2022-02-10T16:40:52.309Z|18989"];
         for (let i = 0; i < 4; i++) {
-            let enemy = await ƒ.Project.createGraphInstance(graphEnemy);
+            enemy = await ƒ.Project.createGraphInstance(graphEnemy);
             enemy.addEventListener("graphEvent", hndGraphEvent, true);
             enemies.addChild(enemy);
-            enemy.mtxLocal.translateY(-1 - i / 2);
-            enemy.getComponent(FlappyBug.EnemyScript).speedEnemyTranslation *= randFloat(1.1, 1.4);
+            enemy.mtxLocal.translateY(-1 + i / 2);
+            enemy.getComponent(FlappyBug.EnemyScript).speedEnemyTranslation *= randFloat(1.1, 1.5);
         }
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, fps); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
         let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-        matSky.mtxPivot.translateX(0.05 * deltaTime);
-        matGround.mtxPivot.translateX(0.25 * deltaTime);
+        matSky.mtxPivot.translateX(0.03 * deltaTime);
+        matGround.mtxPivot.translateX(0.2 * deltaTime);
         let flap = ƒ.Keyboard.mapToValue(1, 0, [ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.ARROW_UP, ƒ.KEYBOARD_CODE.S]);
         ctrFlap.setInput(flap * deltaTime);
         player.mtxLocal.translateY(ctrFlap.getOutput() - gravity);
@@ -134,19 +136,25 @@ var FlappyBug;
                 break;
             }
         }
+        if (enemy.mtxWorld.translation.x == 0) {
+            root.removeChild(enemy);
+        }
         // ƒ.Physics.world.simulate();  // if physics is included and used
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
     function getNodesFromGraph() {
         root = ƒ.Project.resources["Graph|2021-12-20T18:00:23.325Z|85852"];
-        player = root.getChildrenByName("Player")[0];
+        // player = root.getChildrenByName("Player")[0];
         // playerBody = player.getComponent(ƒ.ComponentRigidbody);
         enemies = root.getChildrenByName("Enemies")[0];
         sky = root.getChildrenByName("Background")[0].getChildrenByName("Sky")[0];
         ground = root.getChildrenByName("Background")[0].getChildrenByName("Ground")[0];
         matSky = sky.getComponent(ƒ.ComponentMaterial);
         matGround = ground.getComponent(ƒ.ComponentMaterial);
+        player = new FlappyBug.Player();
+        playerPlaceholderNode = root.getChildrenByName("Players")[0];
+        playerPlaceholderNode.addChild(player);
     }
     function randFloat(min, max) {
         return Math.random() * (max - min) + min;
@@ -159,13 +167,26 @@ var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
     class Player extends ƒ.Node {
+        health = 1;
+        componentAudio;
+        flapSound;
+        hitSound;
         constructor() {
             super("Player");
+            this.createPlayer();
+            this.loadSounds();
+        }
+        createPlayer() {
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshQuad("MeshPlayer")));
-            this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("MtrPlayer", ƒ.ShaderTexture)));
-            this.addComponent(new ƒ.ComponentTransform);
+            this.getComponent(ƒ.ComponentMesh).mtxPivot.scale(new ƒ.Vector3(0.35, 0.2, 1));
+            this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("BirdTex", ƒ.ShaderTexture, new ƒ.CoatTextured(new ƒ.Color(1, 1, 1), new ƒ.TextureImage("assets/images/sprites/bird/skeleton-animation_00.png")))));
+            this.addComponent(new ƒ.ComponentTransform());
             // this.mtxLocal.scale(new ƒ.Vector3(0.2, 0.4, 0));
-            this.getComponent(ƒ.ComponentMesh).mtxPivot.scale(new ƒ.Vector3(0.2, 0.3, 0));
+        }
+        async loadSounds() {
+            // this.flapSound = await ƒ.Audio.load("assets/audio/player/flap.mp3");
+            this.componentAudio = new ƒ.ComponentAudio(this.flapSound);
+            this.addComponent(this.componentAudio);
         }
     }
     FlappyBug.Player = Player;
