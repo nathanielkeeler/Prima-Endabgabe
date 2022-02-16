@@ -13,11 +13,12 @@ namespace FlappyBug {
   let ground: ƒ.Node;
   let matSky: ƒ.ComponentMaterial;
   let matGround: ƒ.ComponentMaterial;
-  let gravity: number = 0.015;
-  let fps: number = 100;
+  let gravity: number = 0.01;
+  let fps: number = 144;
+  let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
 
   let ctrFlap: ƒ.Control = new ƒ.Control("Flap", 4, ƒ.CONTROL_TYPE.PROPORTIONAL);
-  ctrFlap.setDelay(200);
+  ctrFlap.setDelay(300);
   
   document.addEventListener("interactiveViewportStarted", <EventListener><unknown>start);
 
@@ -33,7 +34,7 @@ namespace FlappyBug {
       enemy.addEventListener("graphEvent", hndGraphEvent, true);
       enemies.addChild(enemy);
       enemy.mtxLocal.translateY(-1 + i / 2);
-      enemy.getComponent(EnemyScript).speedEnemyTranslation *= randFloat(1.1, 1.5);
+      enemy.getComponent(EnemyScript).speedEnemyTranslation *= randFloat(1, 2);
     }
 
     ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
@@ -43,10 +44,13 @@ namespace FlappyBug {
 
   function update(_event: Event): void {
 
-    let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
+    deltaTime = ƒ.Loop.timeFrameReal / 1000;
+    
+    checkOutOfBounds();
 
-    matSky.mtxPivot.translateX(0.03 * deltaTime);
-    matGround.mtxPivot.translateX(0.2 * deltaTime);
+    // Background Paralax
+    matSky.mtxPivot.translateX(0.04 * deltaTime);
+    matGround.mtxPivot.translateX(0.25 * deltaTime);
 
     let flap: number = ƒ.Keyboard.mapToValue(1, 0, [ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.ARROW_UP, ƒ.KEYBOARD_CODE.S]);
     ctrFlap.setInput(flap * deltaTime);
@@ -55,6 +59,7 @@ namespace FlappyBug {
     // impulse
     // world up vector instead node vector
 
+    // Collision Detection
     for (let enemy of enemies.getChildren()) {
       if (enemy.getComponent(EnemyScript).checkCollision(player.mtxWorld.translation, 0.3)) {
         console.log("Collision");
@@ -62,9 +67,7 @@ namespace FlappyBug {
       }
     }
 
-    if(enemy.mtxWorld.translation.x == 0) {
-      root.removeChild(enemy);
-    }
+    
 
     // ƒ.Physics.world.simulate();  // if physics is included and used
     viewport.draw();
@@ -83,6 +86,26 @@ namespace FlappyBug {
     player = new Player();
     playerPlaceholderNode = root.getChildrenByName("Players")[0];
     playerPlaceholderNode.addChild(player);
+  }
+
+  function checkOutOfBounds(): void {
+    let upperBoundry = 1.4;
+    let lowerBoundry = -1.25;
+    let leftBoundary = -3.2;
+    let rightBoundary = 3.2;
+    
+    // Player
+    if(player.mtxWorld.translation.y >= upperBoundry)
+      player.mtxLocal.translation = new ƒ.Vector3(player.mtxWorld.translation.x, upperBoundry, 0);
+    if(player.mtxWorld.translation.y <= lowerBoundry) {
+      player.mtxLocal.translation = new ƒ.Vector3(player.mtxWorld.translation.x, lowerBoundry, 0);
+      matSky.mtxPivot.translateX(-0.04 * deltaTime);
+      matGround.mtxPivot.translateX(-0.25 * deltaTime);
+    }
+    // Enemy
+    if(enemy.mtxWorld.translation.x <= leftBoundary) {
+      enemy.mtxLocal.translation = new ƒ.Vector3(rightBoundary, randFloat(lowerBoundry+0.05, upperBoundry), 0);
+    }
   }
 
   function randFloat(min: number, max: number) {

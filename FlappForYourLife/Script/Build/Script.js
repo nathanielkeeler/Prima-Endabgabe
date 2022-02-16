@@ -101,10 +101,11 @@ var FlappyBug;
     let ground;
     let matSky;
     let matGround;
-    let gravity = 0.015;
-    let fps = 100;
+    let gravity = 0.01;
+    let fps = 144;
+    let deltaTime = ƒ.Loop.timeFrameReal / 1000;
     let ctrFlap = new ƒ.Control("Flap", 4, 0 /* PROPORTIONAL */);
-    ctrFlap.setDelay(200);
+    ctrFlap.setDelay(300);
     document.addEventListener("interactiveViewportStarted", start);
     async function start(_event) {
         viewport = _event.detail;
@@ -115,29 +116,29 @@ var FlappyBug;
             enemy.addEventListener("graphEvent", hndGraphEvent, true);
             enemies.addChild(enemy);
             enemy.mtxLocal.translateY(-1 + i / 2);
-            enemy.getComponent(FlappyBug.EnemyScript).speedEnemyTranslation *= randFloat(1.1, 1.5);
+            enemy.getComponent(FlappyBug.EnemyScript).speedEnemyTranslation *= randFloat(1, 2);
         }
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, fps); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
-        let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-        matSky.mtxPivot.translateX(0.03 * deltaTime);
-        matGround.mtxPivot.translateX(0.2 * deltaTime);
+        deltaTime = ƒ.Loop.timeFrameReal / 1000;
+        checkOutOfBounds();
+        // Background Paralax
+        matSky.mtxPivot.translateX(0.04 * deltaTime);
+        matGround.mtxPivot.translateX(0.25 * deltaTime);
         let flap = ƒ.Keyboard.mapToValue(1, 0, [ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.ARROW_UP, ƒ.KEYBOARD_CODE.S]);
         ctrFlap.setInput(flap * deltaTime);
         player.mtxLocal.translateY(ctrFlap.getOutput() - gravity);
         // playerBody.applyForce(ƒ.Vector3.SCALE(player.mtxLocal.getY(), ctrFlap.getOutput()));
         // impulse
         // world up vector instead node vector
+        // Collision Detection
         for (let enemy of enemies.getChildren()) {
             if (enemy.getComponent(FlappyBug.EnemyScript).checkCollision(player.mtxWorld.translation, 0.3)) {
                 console.log("Collision");
                 break;
             }
-        }
-        if (enemy.mtxWorld.translation.x == 0) {
-            root.removeChild(enemy);
         }
         // ƒ.Physics.world.simulate();  // if physics is included and used
         viewport.draw();
@@ -155,6 +156,24 @@ var FlappyBug;
         player = new FlappyBug.Player();
         playerPlaceholderNode = root.getChildrenByName("Players")[0];
         playerPlaceholderNode.addChild(player);
+    }
+    function checkOutOfBounds() {
+        let upperBoundry = 1.4;
+        let lowerBoundry = -1.25;
+        let leftBoundary = -3.2;
+        let rightBoundary = 3.2;
+        // Player
+        if (player.mtxWorld.translation.y >= upperBoundry)
+            player.mtxLocal.translation = new ƒ.Vector3(player.mtxWorld.translation.x, upperBoundry, 0);
+        if (player.mtxWorld.translation.y <= lowerBoundry) {
+            player.mtxLocal.translation = new ƒ.Vector3(player.mtxWorld.translation.x, lowerBoundry, 0);
+            matSky.mtxPivot.translateX(-0.04 * deltaTime);
+            matGround.mtxPivot.translateX(-0.25 * deltaTime);
+        }
+        // Enemy
+        if (enemy.mtxWorld.translation.x <= leftBoundary) {
+            enemy.mtxLocal.translation = new ƒ.Vector3(rightBoundary, randFloat(lowerBoundry + 0.05, upperBoundry), 0);
+        }
     }
     function randFloat(min, max) {
         return Math.random() * (max - min) + min;
@@ -179,14 +198,14 @@ var FlappyBug;
         createPlayer() {
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshQuad("MeshPlayer")));
             this.getComponent(ƒ.ComponentMesh).mtxPivot.scale(new ƒ.Vector3(0.35, 0.2, 1));
+            this.getComponent(ƒ.ComponentMesh).mtxPivot.translation = new ƒ.Vector3(-1.5, 0, 0);
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("BirdTex", ƒ.ShaderTexture, new ƒ.CoatTextured(new ƒ.Color(1, 1, 1), new ƒ.TextureImage("assets/images/sprites/bird/skeleton-animation_00.png")))));
             this.addComponent(new ƒ.ComponentTransform());
-            // this.mtxLocal.scale(new ƒ.Vector3(0.2, 0.4, 0));
         }
         async loadSounds() {
-            // this.flapSound = await ƒ.Audio.load("assets/audio/player/flap.mp3");
-            this.componentAudio = new ƒ.ComponentAudio(this.flapSound);
-            this.addComponent(this.componentAudio);
+            this.flapSound = new ƒ.ComponentAudio(new ƒ.Audio("assets/audio/player/flap.mp3"), false, false);
+            this.flapSound.volume = 25;
+            this.addComponent(this.flapSound);
         }
     }
     FlappyBug.Player = Player;
