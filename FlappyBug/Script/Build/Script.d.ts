@@ -7,19 +7,16 @@ declare namespace Script {
         hndEvent: (_event: Event) => void;
     }
 }
-declare namespace FlappyBird {
+declare namespace FlappyBug {
 }
-declare namespace FlappyBird {
+declare namespace FlappyBug {
     import ƒ = FudgeCore;
     class Player extends ƒ.Node {
-        private spriteAnimations;
         private spriteNode;
         constructor();
-        private initPlayer;
         private update;
+        private initPlayer;
         private handlePlayerMovement;
         private initSprites;
-        private loadSprites;
-        private generateSprites;
     }
 }

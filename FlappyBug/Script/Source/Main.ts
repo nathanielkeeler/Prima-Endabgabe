@@ -1,4 +1,4 @@
-namespace FlappyBird {
+namespace FlappyBug {
 	import ƒ = FudgeCore;
 
 	ƒ.Debug.info("Main Program Template running!");
@@ -13,11 +13,12 @@ namespace FlappyBird {
 
 	function start(_event: CustomEvent): void {
 		viewport = _event.detail;
-
 		root = viewport.getBranch();
 		sky = root.getChildrenByName("Sky")[0];
 		ground = root.getChildrenByName("Ground")[0];
+		
 		player = new Player();
+		root.appendChild(player);
 		
 		ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
 		ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 60, true);
@@ -29,11 +30,11 @@ namespace FlappyBird {
 		// ƒ.Physics.simulate();
 		animateBackground();
 
-
-
 		viewport.draw();
 		ƒ.AudioManager.default.update();
 	}
+
+
 
 	function animateBackground(): void {
 		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);

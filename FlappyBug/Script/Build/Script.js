@@ -36,8 +36,8 @@ var Script;
     }
     Script.CustomComponentScript = CustomComponentScript;
 })(Script || (Script = {}));
-var FlappyBird;
-(function (FlappyBird) {
+var FlappyBug;
+(function (FlappyBug) {
     var ƒ = FudgeCore;
     ƒ.Debug.info("Main Program Template running!");
     document.addEventListener("interactiveViewportStarted", start);
@@ -51,7 +51,8 @@ var FlappyBird;
         root = viewport.getBranch();
         sky = root.getChildrenByName("Sky")[0];
         ground = root.getChildrenByName("Ground")[0];
-        player = new FlappyBird.Player();
+        player = new FlappyBug.Player();
+        root.appendChild(player);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 60, true);
     }
@@ -65,13 +66,12 @@ var FlappyBird;
         sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
         ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
     }
-})(FlappyBird || (FlappyBird = {}));
-var FlappyBird;
-(function (FlappyBird) {
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     class Player extends ƒ.Node {
-        spriteAnimations;
         spriteNode;
         constructor() {
             super("Player");
@@ -79,41 +79,33 @@ var FlappyBird;
             this.initSprites();
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
         }
-        initPlayer() {
-            this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("PlayerMesh")));
-            this.addComponent(new ƒ.ComponentMaterial());
-            this.addComponent(new ƒ.ComponentTransform());
-        }
         update = (_event) => {
             this.handlePlayerMovement();
         };
+        initPlayer() {
+            this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("PlayerMesh")));
+            this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("PlayerMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
+            this.addComponent(new ƒ.ComponentTransform());
+            this.mtxLocal.translation = new ƒ.Vector3(0, 0, 0.5);
+        }
         handlePlayerMovement() {
         }
         async initSprites() {
-            await this.loadSprites();
+            let imgSpriteSheet = new ƒ.TextureImage();
+            await imgSpriteSheet.load("Assets/images/sprites/bug-flying.png");
+            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("PlayerSpriteAnimation", coat);
+            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 2000, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
             this.spriteNode = new ƒAid.NodeSprite("Sprite");
             this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
-            this.spriteNode.setAnimation(this.spriteAnimations["PlayerSpriteAnimation"]);
+            this.spriteNode.setAnimation(animation);
             this.spriteNode.setFrameDirection(1);
             this.spriteNode.mtxLocal.translateY(0);
-            this.spriteNode.framerate = 25;
+            this.spriteNode.framerate = 30;
             this.addChild(this.spriteNode);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
         }
-        async loadSprites() {
-            let imgSpriteSheet = new ƒ.TextureImage();
-            await imgSpriteSheet.load("Assets/images/sprites/bird-sprite.png");
-            let spriteSheet = new ƒ.CoatTextured(new ƒ.Color(), imgSpriteSheet);
-            this.generateSprites(spriteSheet);
-        }
-        generateSprites(_spritesheet) {
-            this.spriteAnimations = {};
-            let spriteName = "PlayerSprite";
-            let sprite = new ƒAid.SpriteSheetAnimation(spriteName, _spritesheet);
-            sprite.generateByGrid(ƒ.Rectangle.GET(0, 0, 64, 64), 6, 70, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(64));
-            this.spriteAnimations[spriteName] = sprite;
-        }
     }
-    FlappyBird.Player = Player;
-})(FlappyBird || (FlappyBird = {}));
+    FlappyBug.Player = Player;
+})(FlappyBug || (FlappyBug = {}));
 //# sourceMappingURL=Script.js.map
