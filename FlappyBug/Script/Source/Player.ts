@@ -30,23 +30,49 @@ namespace FlappyBug {
 			this.addComponent(this.rigidbody);
 			this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
 			this.rigidbody.mass = 1;
-			this.rigidbody.dampTranslation = 0.1;
-			this.rigidbody.effectGravity = 1;
+			this.rigidbody.dampTranslation = 1;
+			this.rigidbody.effectGravity = 0.11;
 			this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
 			this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
 			this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
 		}
 
 		private handlePlayerMovement() {
-
+			let vertical: boolean = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
+			if(vertical) {
+				this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
+			}
 		}
 
-		private async initSprites(): Promise<void> {
+		private initSprites(): void {
+			this.flyingSprites();
+		}
+
+		private async flyingSprites(): Promise<void> {
 			let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
 			await imgSpriteSheet.load("Assets/images/sprites/bug-flying.png");
 			let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
 
-			let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerSpriteAnimation", coat);
+			let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerFlyingSpriteAnimation", coat);
+			animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
+
+			this.spriteNode = new ƒAid.NodeSprite("Sprite");
+			this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
+			this.spriteNode.setAnimation(animation);
+			this.spriteNode.setFrameDirection(1);
+			this.spriteNode.mtxLocal.translateY(-0.5);
+			this.spriteNode.framerate = 30;
+
+			this.addChild(this.spriteNode);
+			this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
+		}
+
+		private async crashSprites(): Promise<void> {
+			let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
+			await imgSpriteSheet.load("Assets/images/sprites/bug-crash.png");
+			let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+
+			let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", coat);
 			animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
 
 			this.spriteNode = new ƒAid.NodeSprite("Sprite");

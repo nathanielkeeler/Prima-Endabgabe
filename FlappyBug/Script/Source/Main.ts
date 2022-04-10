@@ -21,7 +21,7 @@ namespace FlappyBug {
 		root.appendChild(player);
 		
 		ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
-		ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 60, true);
+		ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120, true);
 	}
 
 

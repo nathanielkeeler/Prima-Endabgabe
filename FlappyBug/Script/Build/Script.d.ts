@@ -19,5 +19,7 @@ declare namespace FlappyBug {
         private initPlayer;
         private handlePlayerMovement;
         private initSprites;
+        private flyingSprites;
+        private crashSprites;
     }
 }
