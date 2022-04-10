@@ -27,7 +27,7 @@ namespace FlappyBug {
 
 
 	function update(_event: Event): void {
-		// ƒ.Physics.simulate();
+		ƒ.Physics.simulate();
 		animateBackground();
 
 		viewport.draw();

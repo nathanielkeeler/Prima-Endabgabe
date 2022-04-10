@@ -57,7 +57,7 @@ var FlappyBug;
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 60, true);
     }
     function update(_event) {
-        // ƒ.Physics.simulate();
+        ƒ.Physics.simulate();
         animateBackground();
         viewport.draw();
         ƒ.AudioManager.default.update();
@@ -73,6 +73,7 @@ var FlappyBug;
     var ƒAid = FudgeAid;
     class Player extends ƒ.Node {
         spriteNode;
+        rigidbody;
         constructor() {
             super("Player");
             this.initPlayer();
@@ -86,7 +87,17 @@ var FlappyBug;
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("PlayerMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("PlayerMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
-            this.mtxLocal.translation = new ƒ.Vector3(0, 0, 0.5);
+            this.mtxLocal.translation = new ƒ.Vector3(-1, 0, 0);
+            this.mtxLocal.scaling = new ƒ.Vector3(0.15, 0.15, 0.15);
+            this.rigidbody = new ƒ.ComponentRigidbody();
+            this.addComponent(this.rigidbody);
+            this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
+            this.rigidbody.mass = 1;
+            this.rigidbody.dampTranslation = 0.1;
+            this.rigidbody.effectGravity = 1;
+            this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
+            this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
         }
         handlePlayerMovement() {
         }
@@ -95,12 +106,12 @@ var FlappyBug;
             await imgSpriteSheet.load("Assets/images/sprites/bug-flying.png");
             let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
             let animation = new ƒAid.SpriteSheetAnimation("PlayerSpriteAnimation", coat);
-            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 2000, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
+            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
             this.spriteNode = new ƒAid.NodeSprite("Sprite");
             this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
             this.spriteNode.setAnimation(animation);
             this.spriteNode.setFrameDirection(1);
-            this.spriteNode.mtxLocal.translateY(0);
+            this.spriteNode.mtxLocal.translateY(-0.5);
             this.spriteNode.framerate = 30;
             this.addChild(this.spriteNode);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);

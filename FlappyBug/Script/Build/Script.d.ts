@@ -13,6 +13,7 @@ declare namespace FlappyBug {
     import ƒ = FudgeCore;
     class Player extends ƒ.Node {
         private spriteNode;
+        private rigidbody;
         constructor();
         private update;
         private initPlayer;
