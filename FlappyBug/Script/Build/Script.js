@@ -47,6 +47,7 @@ var FlappyBug;
     let ground;
     let player;
     function start(_event) {
+        ƒ.AudioManager.default.listenTo(root);
         viewport = _event.detail;
         root = viewport.getBranch();
         sky = root.getChildrenByName("Sky")[0];
@@ -74,41 +75,45 @@ var FlappyBug;
     class Player extends ƒ.Node {
         spriteNode;
         rigidbody;
+        cmpAudioFlying;
+        cmpAudioCrash;
+        flyingSound;
+        crashSound;
         constructor() {
             super("Player");
             this.initPlayer();
-            this.initSprites();
-            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updatePlayer);
         }
-        update = (_event) => {
+        initPlayer() {
+            this.initPlayerBodyandPosition();
+            this.initAudio();
+            this.initFlyingSprites();
+        }
+        updatePlayer = (_event) => {
             this.handlePlayerMovement();
         };
-        initPlayer() {
+        initPlayerBodyandPosition() {
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("PlayerMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("PlayerMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
             this.mtxLocal.translation = new ƒ.Vector3(-1, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.15, 0.15, 0.15);
             this.rigidbody = new ƒ.ComponentRigidbody();
-            this.addComponent(this.rigidbody);
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
             this.rigidbody.mass = 1;
             this.rigidbody.dampTranslation = 1;
-            this.rigidbody.effectGravity = 0.11;
+            this.rigidbody.effectGravity = 0.115;
             this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
             this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
             this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
+            this.addComponent(this.rigidbody);
         }
         handlePlayerMovement() {
             let vertical = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-            if (vertical) {
+            if (vertical)
                 this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
-            }
         }
-        initSprites() {
-            this.flyingSprites();
-        }
-        async flyingSprites() {
+        async initFlyingSprites() {
             let imgSpriteSheet = new ƒ.TextureImage();
             await imgSpriteSheet.load("Assets/images/sprites/bug-flying.png");
             let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
@@ -123,7 +128,7 @@ var FlappyBug;
             this.addChild(this.spriteNode);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
         }
-        async crashSprites() {
+        async initCrashSprites() {
             let imgSpriteSheet = new ƒ.TextureImage();
             await imgSpriteSheet.load("Assets/images/sprites/bug-crash.png");
             let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
@@ -137,6 +142,14 @@ var FlappyBug;
             this.spriteNode.framerate = 30;
             this.addChild(this.spriteNode);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
+        }
+        async initAudio() {
+            this.flyingSound = new ƒ.Audio("Assets/audio/bug_flying.mp3");
+            this.cmpAudioFlying = new ƒ.ComponentAudio(this.flyingSound, true, true);
+            this.addComponent(this.cmpAudioFlying);
+            this.crashSound = new ƒ.Audio("Assets/audio/bug_splat.mp3");
+            this.cmpAudioCrash = new ƒ.ComponentAudio(this.crashSound, false, false);
+            this.addComponent(this.cmpAudioCrash);
         }
     }
     FlappyBug.Player = Player;

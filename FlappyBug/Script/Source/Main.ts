@@ -12,6 +12,7 @@ namespace FlappyBug {
 
 
 	function start(_event: CustomEvent): void {
+		ƒ.AudioManager.default.listenTo(root);
 		viewport = _event.detail;
 		root = viewport.getBranch();
 		sky = root.getChildrenByName("Sky")[0];

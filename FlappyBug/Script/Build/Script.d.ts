@@ -14,12 +14,17 @@ declare namespace FlappyBug {
     class Player extends ƒ.Node {
         private spriteNode;
         private rigidbody;
+        private cmpAudioFlying;
+        private cmpAudioCrash;
+        private flyingSound;
+        private crashSound;
         constructor();
-        private update;
         private initPlayer;
+        private updatePlayer;
+        private initPlayerBodyandPosition;
         private handlePlayerMovement;
-        private initSprites;
-        private flyingSprites;
-        private crashSprites;
+        private initFlyingSprites;
+        private initCrashSprites;
+        private initAudio;
     }
 }
