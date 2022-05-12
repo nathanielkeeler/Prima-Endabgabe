@@ -32,7 +32,6 @@ declare namespace FlappyBug {
         private initPlayerBodyandPosition;
         private handlePlayerMovement;
         private initFlyingSprites;
-        private initCrashSprites;
         private initAudio;
     }
 }

@@ -9,7 +9,7 @@ namespace FlappyBug {
 	let ground: ƒ.Node;
 	let player: Player;
 
-	let soundtrack: ƒ.ComponentAudio;
+	// let soundtrack: ƒ.ComponentAudio;
 
 
 	function start(_event: CustomEvent): void {
@@ -26,6 +26,7 @@ namespace FlappyBug {
 
 	function update(_event: Event): void {
 		ƒ.Physics.simulate();
+
 		animateBackground();
 
 		viewport.draw();
@@ -39,7 +40,7 @@ namespace FlappyBug {
 		ground = root.getChildrenByName("Ground")[0];
 		player = new Player();
 		root.appendChild(player);
-		initAudio();
+		// initAudio();
 
 		let canvas: HTMLCanvasElement = viewport.getCanvas();
 		canvas.requestPointerLock();
@@ -50,10 +51,10 @@ namespace FlappyBug {
 		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
 	}
 
-	function initAudio(): void {
-		ƒ.AudioManager.default.listenTo(root);
-		soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
-		soundtrack.play(true);
-		soundtrack.volume = 7;
-	}
+	// function initAudio(): void {
+	// 	ƒ.AudioManager.default.listenTo(root);
+	// 	soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
+	// 	soundtrack.play(true);
+	// 	soundtrack.volume = 7;
+	// }
 }
