@@ -8,6 +8,14 @@ declare namespace Script {
     }
 }
 declare namespace FlappyBug {
+    class GameState extends ƒ.Mutable {
+        private static instance;
+        constructor();
+        static get(): GameState;
+        protected reduceMutator(_mutator: ƒ.Mutator): void;
+    }
+}
+declare namespace FlappyBug {
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;

@@ -18,13 +18,13 @@ namespace FlappyBug {
 			ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.updatePlayer);
 		}
 
-		
+
 		private initPlayer(): void {
 			this.initPlayerBodyandPosition();
 			this.initAudio();
 			this.initFlyingSprites();
 		}
-		
+
 		private updatePlayer = (_event: Event) => {
 			this.handlePlayerMovement();
 		}
@@ -49,7 +49,7 @@ namespace FlappyBug {
 
 		private handlePlayerMovement() {
 			let vertical: boolean = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-			if(vertical)
+			if (vertical)
 				this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
 		}
 
@@ -92,8 +92,9 @@ namespace FlappyBug {
 		}
 
 		private async initAudio(): Promise<void> {
-			this.flyingSound = new ƒ.Audio("Assets/audio/bug_flying.mp3"); 
-			this.cmpAudioFlying = new ƒ.ComponentAudio(this.flyingSound,true, true);
+			this.flyingSound = new ƒ.Audio("Assets/audio/bug_flying.mp3");
+			this.cmpAudioFlying = new ƒ.ComponentAudio(this.flyingSound, true, true);
+			this.cmpAudioFlying.volume = 0.8;
 			this.addComponent(this.cmpAudioFlying);
 
 			this.crashSound = new ƒ.Audio("Assets/audio/bug_splat.mp3");

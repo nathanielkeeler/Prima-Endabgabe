@@ -163,6 +163,8 @@ declare namespace FudgeCore {
         NODE_DESERIALIZED = "nodeDeserialized",
         /** dispatched to {@link GraphInstance} when it's content is set according to a serialization of a {@link Graph}  */
         GRAPH_INSTANTIATED = "graphInstantiated",
+        /** dispatched to a {@link Graph} when it's finished deserializing  */
+        GRAPH_DESERIALIZED = "graphDeserialized",
         /** dispatched to {@link Time} when it's scaling changed  */
         TIME_SCALED = "timeScaled",
         /** dispatched to {@link FileIoBrowserLocal} when a list of files has been loaded  */
@@ -171,10 +173,16 @@ declare namespace FudgeCore {
         FILE_SAVED = "fileSaved",
         /** dispatched to {@link Node} when recalculating transforms for render */
         RENDER_PREPARE = "renderPrepare",
+        /** dispatched to {@link Viewport} and {@link Node} when recalculation of the branch to render starts. */
         RENDER_PREPARE_START = "renderPrepareStart",
+        /** dispatched to {@link Viewport} and {@link Node} when recalculation of the branch to render ends. The branch dispatches before the lights are transmitted to the shaders  */
         RENDER_PREPARE_END = "renderPrepareEnd",
-        /** dispatched to Joint-Components in order to disconnect */
-        DISCONNECT_JOINT = "disconnectJoint"
+        /** dispatched to {@link Joint}-Components in order to disconnect */
+        DISCONNECT_JOINT = "disconnectJoint",
+        /** dispatched to {@link Node} when it gets attached to a viewport for rendering */
+        ATTACH_BRANCH = "attachBranch",
+        /** dispatched to {@link Project} when it's done loading resources from a url */
+        RESOURCES_LOADED = "resourcesLoaded"
     }
     type EventListenerƒ = ((_event: EventPointer) => void) | ((_event: EventDragDrop) => void) | ((_event: EventWheel) => void) | ((_event: EventKeyboard) => void) | ((_event: Eventƒ) => void) | ((_event: EventPhysics) => void) | ((_event: CustomEvent) => void) | EventListenerOrEventListenerObject;
     type Eventƒ = EventPointer | EventDragDrop | EventWheel | EventKeyboard | Event | EventPhysics | CustomEvent;
@@ -1946,6 +1954,7 @@ declare namespace FudgeCore {
      */
     class ComponentFaceCamera extends Component {
         static readonly iSubclass: number;
+        upLocal: boolean;
         up: Vector3;
         restrict: boolean;
         constructor();
@@ -1981,16 +1990,17 @@ declare namespace FudgeCore {
     }
     /**
      * Ambient light, coming from all directions, illuminating everything with its color independent of position and orientation (like a foggy day or in the shades)
+     * Attached to a node by {@link ComponentLight}, the pivot matrix is ignored.
      * ```plaintext
      * ~ ~ ~
      *  ~ ~ ~
      * ```
      */
     class LightAmbient extends Light {
-        constructor(_color?: Color);
     }
     /**
      * Directional light, illuminating everything from a specified direction with its color (like standing in bright sunlight)
+     * Attached to a node by {@link ComponentLight}, the pivot matrix specifies the direction of the light only.
      * ```plaintext
      * --->
      * --->
@@ -1998,10 +2008,12 @@ declare namespace FudgeCore {
      * ```
      */
     class LightDirectional extends Light {
-        constructor(_color?: Color);
     }
     /**
      * Omnidirectional light emitting from its position, illuminating objects depending on their position and distance with its color (like a colored light bulb)
+     * Attached to a node by {@link ComponentLight}, the pivot matrix specifies the position of the light, it's shape and rotation.
+     * So with uneven scaling, other shapes than a perfect sphere, such as an oval or a disc, are possible, which creates a visible effect of the rotation too.
+     * The intensity of the light drops linearly from 1 in the center to 0 at the perimeter of the shape.
      * ```plaintext
      *         .\|/.
      *        -- o --
@@ -2009,10 +2021,11 @@ declare namespace FudgeCore {
      * ```
      */
     class LightPoint extends Light {
-        range: number;
     }
     /**
      * Spot light emitting within a specified angle from its position, illuminating objects depending on their position and distance with its color
+     * Attached to a node by {@link ComponentLight}, the pivot matrix specifies the position of the light, the direction and the size and angles of the cone.
+     * The intensity of the light drops linearly from 1 in the center to 0 at the outer limits of the cone.
      * ```plaintext
      *          o
      *         /|\
@@ -2034,6 +2047,7 @@ declare namespace FudgeCore {
     }
     /**
       * Attaches a {@link Light} to the node
+      * The pivot matrix has different effects depending on the type of the {@link Light}. See there for details.
       * @authors Jirka Dell'Oro-Friedl, HFU, 2019
       */
     class ComponentLight extends Component {
@@ -2187,7 +2201,7 @@ declare namespace FudgeCore {
         protected timeValueDelay: number;
         protected timeOutputTargetSet: number;
         protected idTimer: number;
-        constructor(_name: string, _factor?: number, _type?: CONTROL_TYPE, _active?: boolean);
+        constructor(_name: string, _factor?: number, _type?: CONTROL_TYPE, _delay?: number);
         /**
          * Set the time-object to be used when calculating the output in {@link CONTROL_TYPE.INTEGRAL}
          */
@@ -3247,11 +3261,10 @@ declare namespace FudgeCore {
          * Multiply this matrix with the given matrix
          */
         multiply(_matrix: Matrix4x4, _fromLeft?: boolean): void;
-        getEulerAngles(): Vector3;
         /**
          * Calculates and returns the euler-angles representing the current rotation of this matrix.
          */
-        getEulerAnglesX(): Vector3;
+        getEulerAngles(): Vector3;
         /**
          * Sets the elements of this matrix to the values of the given matrix
          */
@@ -5129,6 +5142,7 @@ declare namespace FudgeCore {
          * render passes.
          */
         static prepare(_branch: Node, _options?: RenderPrepareOptions, _mtxWorld?: Matrix4x4, _shadersUsed?: (typeof Shader)[]): void;
+        static addLights(cmpLights: ComponentLight[]): void;
         /**
          * Used with a {@link Picker}-camera, this method renders one pixel with picking information
          * for each node in the line of sight and return that as an unsorted {@link Pick}-array
@@ -5431,7 +5445,7 @@ declare namespace FudgeCore {
      * Keeps a list of the resources and generates ids to retrieve them.
      * Resources are objects referenced multiple times but supposed to be stored only once
      */
-    export abstract class Project {
+    export abstract class Project extends EventTargetStatic {
         static resources: Resources;
         static serialization: SerializationOfResources;
         static scriptNamespaces: ScriptNamespaces;
@@ -5446,7 +5460,8 @@ declare namespace FudgeCore {
         static register(_resource: SerializableResource, _idResource?: string): void;
         static deregister(_resource: SerializableResource): void;
         static clear(): void;
-        static getResourcesOfType<T>(_type: new (_args: General) => T): Resources;
+        static getResourcesByType<T>(_type: new (_args: General) => T): SerializableResource[];
+        static getResourcesByName(_name: string): SerializableResource[];
         /**
          * Generate a user readable and unique id using the type of the resource, the date and random numbers
          * @param _resource
@@ -6239,6 +6254,7 @@ declare namespace FudgeCore {
         static useProgram(this: typeof Shader): void;
         static createProgram(this: typeof Shader): void;
         protected static registerSubclass(_subclass: typeof Shader): number;
+        protected static insertDefines(_shader: string, _defines: string[]): string;
     }
 }
 declare namespace FudgeCore {
@@ -6356,6 +6372,11 @@ declare namespace FudgeCore {
         static getVertexShaderSource(): string;
         static getFragmentShaderSource(): string;
     }
+}
+declare namespace FudgeCore {
+    let shaderSources: {
+        [source: string]: string;
+    };
 }
 declare namespace FudgeCore {
     interface BoneList {

@@ -54,11 +54,21 @@
       }
     }
   },
+  "Audio|2022-05-12T15:11:50.146Z|24073": {
+    "ƒ.Audio": {
+      "url": "Assets\\audio\\soundtrack.mp3",
+      "idResource": "Audio|2022-05-12T15:11:50.146Z|24073",
+      "name": "Assets\\audio\\soundtrack.mp3",
+      "type": "Audio"
+    }
+  },
   "Graph|2022-04-08T13:27:53.880Z|73360": {
     "ƒ.Graph": {
       "name": "Scene",
       "active": true,
-      "components": {},
+      "components": {
+        "ComponentAudio": []
+      },
       "children": [
         {
           "ƒ.Node": {
@@ -176,6 +186,26 @@
                       "active": true
                     },
                     "idMaterial": "Material|2022-04-08T13:45:06.268Z|84408"
+                  }
+                }
+              ]
+            },
+            "children": []
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Soundtrack",
+            "active": true,
+            "components": {
+              "ComponentAudio": [
+                {
+                  "ƒ.ComponentAudio": {
+                    "active": true,
+                    "idResource": "Audio|2022-05-12T15:11:50.146Z|24073",
+                    "playing": false,
+                    "loop": true,
+                    "volume": 1
                   }
                 }
               ]

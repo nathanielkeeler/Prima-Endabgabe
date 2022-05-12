@@ -38,22 +38,36 @@ var Script;
 })(Script || (Script = {}));
 var FlappyBug;
 (function (FlappyBug) {
+    var ƒui = FudgeUserInterface;
+    class GameState extends ƒ.Mutable {
+        static instance;
+        constructor() {
+            super();
+            GameState.instance = this;
+            let hud = document.querySelector("#HUD");
+            console.log(new ƒui.Controller(this, hud));
+        }
+        static get() {
+            return GameState.instance || new GameState();
+        }
+        reduceMutator(_mutator) { }
+    }
+    FlappyBug.GameState = GameState;
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
     var ƒ = FudgeCore;
-    ƒ.Debug.info("Main Program Template running!");
     document.addEventListener("interactiveViewportStarted", start);
     let viewport;
     let root;
     let sky;
     let ground;
     let player;
+    let soundtrack;
     function start(_event) {
         ƒ.AudioManager.default.listenTo(root);
         viewport = _event.detail;
-        root = viewport.getBranch();
-        sky = root.getChildrenByName("Sky")[0];
-        ground = root.getChildrenByName("Ground")[0];
-        player = new FlappyBug.Player();
-        root.appendChild(player);
+        initGame();
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120, true);
     }
@@ -63,9 +77,25 @@ var FlappyBug;
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
+    function initGame() {
+        root = viewport.getBranch();
+        sky = root.getChildrenByName("Sky")[0];
+        ground = root.getChildrenByName("Ground")[0];
+        player = new FlappyBug.Player();
+        root.appendChild(player);
+        initAudio();
+        let canvas = viewport.getCanvas();
+        canvas.requestPointerLock();
+    }
     function animateBackground() {
         sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
         ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
+    }
+    function initAudio() {
+        ƒ.AudioManager.default.listenTo(root);
+        soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
+        soundtrack.play(true);
+        soundtrack.volume = 7;
     }
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;
@@ -146,6 +176,7 @@ var FlappyBug;
         async initAudio() {
             this.flyingSound = new ƒ.Audio("Assets/audio/bug_flying.mp3");
             this.cmpAudioFlying = new ƒ.ComponentAudio(this.flyingSound, true, true);
+            this.cmpAudioFlying.volume = 0.8;
             this.addComponent(this.cmpAudioFlying);
             this.crashSound = new ƒ.Audio("Assets/audio/bug_splat.mp3");
             this.cmpAudioCrash = new ƒ.ComponentAudio(this.crashSound, false, false);
