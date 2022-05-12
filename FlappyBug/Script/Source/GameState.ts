@@ -3,13 +3,13 @@ namespace FlappyBug {
 
 	export class GameState extends ƒ.Mutable {
 		private static instance: GameState;
+		public gameRunning: boolean;
+		public score: number;
 
 		public constructor() {
 			super();
 			GameState.instance = this;
-
 			let hud: HTMLDivElement = document.querySelector("#HUD");
-
 			console.log(new ƒui.Controller(this, hud));
 		}
 

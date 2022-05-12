@@ -10,6 +10,8 @@ declare namespace Script {
 declare namespace FlappyBug {
     class GameState extends ƒ.Mutable {
         private static instance;
+        gameRunning: boolean;
+        score: number;
         constructor();
         static get(): GameState;
         protected reduceMutator(_mutator: ƒ.Mutator): void;

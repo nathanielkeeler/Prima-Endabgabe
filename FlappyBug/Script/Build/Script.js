@@ -41,6 +41,8 @@ var FlappyBug;
     var ƒui = FudgeUserInterface;
     class GameState extends ƒ.Mutable {
         static instance;
+        gameRunning;
+        score;
         constructor() {
             super();
             GameState.instance = this;
@@ -63,7 +65,8 @@ var FlappyBug;
     let sky;
     let ground;
     let player;
-    // let soundtrack: ƒ.ComponentAudio;
+    let gameState;
+    let soundtrack;
     function start(_event) {
         ƒ.AudioManager.default.listenTo(root);
         viewport = _event.detail;
@@ -73,7 +76,10 @@ var FlappyBug;
     }
     function update(_event) {
         ƒ.Physics.simulate();
-        animateBackground();
+        if (gameState.gameRunning == true) {
+            animateBackground();
+            gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
+        }
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
@@ -83,7 +89,9 @@ var FlappyBug;
         ground = root.getChildrenByName("Ground")[0];
         player = new FlappyBug.Player();
         root.appendChild(player);
-        // initAudio();
+        initAudio();
+        gameState = new FlappyBug.GameState();
+        gameState.gameRunning = true;
         let canvas = viewport.getCanvas();
         canvas.requestPointerLock();
     }
@@ -91,12 +99,12 @@ var FlappyBug;
         sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
         ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
     }
-    // function initAudio(): void {
-    // 	ƒ.AudioManager.default.listenTo(root);
-    // 	soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
-    // 	soundtrack.play(true);
-    // 	soundtrack.volume = 7;
-    // }
+    function initAudio() {
+        ƒ.AudioManager.default.listenTo(root);
+        soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
+        soundtrack.play(true);
+        soundtrack.volume = 7;
+    }
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;
 (function (FlappyBug) {
@@ -157,7 +165,7 @@ var FlappyBug;
             this.spriteNode.setAnimation(animation);
             this.spriteNode.setFrameDirection(1);
             this.spriteNode.mtxLocal.translateY(-0.5);
-            this.spriteNode.framerate = 1;
+            this.spriteNode.framerate = 5;
             this.addChild(this.spriteNode);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
         }

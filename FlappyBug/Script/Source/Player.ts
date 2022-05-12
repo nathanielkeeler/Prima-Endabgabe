@@ -49,7 +49,6 @@ namespace FlappyBug {
 
 		private handlePlayerMovement() {
 			let vertical: boolean = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-			
 			this.spriteNode.framerate = 5;
 			if (vertical) {
 				this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
@@ -70,7 +69,7 @@ namespace FlappyBug {
 			this.spriteNode.setAnimation(animation);
 			this.spriteNode.setFrameDirection(1);
 			this.spriteNode.mtxLocal.translateY(-0.5);
-			this.spriteNode.framerate = 1;
+			this.spriteNode.framerate = 5;
 
 			this.addChild(this.spriteNode);
 			this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
