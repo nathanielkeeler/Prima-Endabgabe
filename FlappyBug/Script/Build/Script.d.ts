@@ -28,6 +28,8 @@ declare namespace FlappyBug {
         private cmpAudioCrash;
         private flyingSound;
         private crashSound;
+        private framerateLow;
+        private framerateHigh;
         constructor();
         private initPlayer;
         private updatePlayer;

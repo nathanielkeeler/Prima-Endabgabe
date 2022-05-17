@@ -10,6 +10,8 @@ namespace FlappyBug {
 		private cmpAudioCrash: ƒ.ComponentAudio;
 		private flyingSound: ƒ.Audio;
 		private crashSound: ƒ.Audio;
+		private framerateLow: number = 5;
+		private framerateHigh: number = 40;
 
 		constructor() {
 			super("Player");
@@ -19,17 +21,17 @@ namespace FlappyBug {
 		}
 
 
-		private initPlayer(): void {
-			this.initPlayerBodyandPosition();
-			this.initAudio();
-			this.initFlyingSprites();
+		private async initPlayer(): Promise<void> {
+			await this.initPlayerBodyandPosition();
+			await this.initAudio();
+			await this.initFlyingSprites();
 		}
 
 		private updatePlayer = (_event: Event) => {
 			this.handlePlayerMovement();
 		}
 
-		private initPlayerBodyandPosition(): void {
+		private async initPlayerBodyandPosition(): Promise<void> {
 			this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("PlayerMesh")));
 			this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("PlayerMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
 			this.addComponent(new ƒ.ComponentTransform());
@@ -49,10 +51,10 @@ namespace FlappyBug {
 
 		private handlePlayerMovement() {
 			let vertical: boolean = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-			this.spriteNode.framerate = 5;
+			this.spriteNode.framerate = this.framerateLow;
 			if (vertical) {
 				this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
-				this.spriteNode.framerate = 40;
+				this.spriteNode.framerate = this.framerateHigh;
 			}
 		}
 
@@ -69,7 +71,7 @@ namespace FlappyBug {
 			this.spriteNode.setAnimation(animation);
 			this.spriteNode.setFrameDirection(1);
 			this.spriteNode.mtxLocal.translateY(-0.5);
-			this.spriteNode.framerate = 5;
+			this.spriteNode.framerate = this.framerateLow;
 
 			this.addChild(this.spriteNode);
 			this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);

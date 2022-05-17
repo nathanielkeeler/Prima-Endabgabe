@@ -62,13 +62,23 @@
       "type": "Audio"
     }
   },
+  "Material|2022-05-17T14:32:00.886Z|70554": {
+    "ƒ.Material": {
+      "name": "ShaderLit",
+      "idResource": "Material|2022-05-17T14:32:00.886Z|70554",
+      "shader": "ShaderLit",
+      "coat": {
+        "ƒ.CoatColored": {
+          "color": "[1, 1, 1, 1]"
+        }
+      }
+    }
+  },
   "Graph|2022-04-08T13:27:53.880Z|73360": {
     "ƒ.Graph": {
       "name": "Scene",
       "active": true,
-      "components": {
-        "ComponentAudio": []
-      },
+      "components": {},
       "children": [
         {
           "ƒ.Node": {
@@ -206,6 +216,62 @@
                     "playing": false,
                     "loop": true,
                     "volume": 1
+                  }
+                }
+              ]
+            },
+            "children": []
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Enemy",
+            "active": true,
+            "components": {
+              "ComponentMesh": [
+                {
+                  "ƒ.ComponentMesh": {
+                    "idMesh": "MeshCube|2022-04-08T13:28:34.667Z|69650",
+                    "pivot": {
+                      "translation": "[1, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[0.09999992698431015, 0.09999992698431015, 0.10000000149011612]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentMaterial": [
+                {
+                  "ƒ.ComponentMaterial": {
+                    "sortForAlpha": false,
+                    "clrPrimary": "[1, 0, 0, 1]",
+                    "clrSecondary": "[1, 1, 1, 1]",
+                    "pivot": {
+                      "translation": "[0, 0]",
+                      "rotation": 0,
+                      "scaling": "[1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    },
+                    "idMaterial": "Material|2022-05-17T14:32:00.886Z|70554"
+                  }
+                }
+              ],
+              "ComponentTransform": [
+                {
+                  "ƒ.ComponentTransform": {
+                    "local": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
                   }
                 }
               ]

@@ -65,6 +65,7 @@ var FlappyBug;
     let sky;
     let ground;
     let player;
+    let enemy;
     let gameState;
     let soundtrack;
     function start(_event) {
@@ -89,7 +90,9 @@ var FlappyBug;
         ground = root.getChildrenByName("Ground")[0];
         player = new FlappyBug.Player();
         root.appendChild(player);
+        enemy = root.getChildrenByName("Enemy")[0];
         initAudio();
+        initAnim();
         gameState = new FlappyBug.GameState();
         gameState.gameRunning = true;
         let canvas = viewport.getCanvas();
@@ -105,6 +108,35 @@ var FlappyBug;
         soundtrack.play(true);
         soundtrack.volume = 7;
     }
+    function initAnim() {
+        let animseq = new ƒ.AnimationSequence();
+        animseq.addKey(new ƒ.AnimationKey(0, 0));
+        animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
+        animseq.addKey(new ƒ.AnimationKey(3000, 0));
+        let animStructure = {
+            components: {
+                ComponentTransform: [
+                    {
+                        "ƒ.ComponentTransform": {
+                            mtxLocal: {
+                                translation: {
+                                    y: animseq
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        };
+        let animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
+        let cmpAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
+        if (enemy.getComponent(ƒ.ComponentAnimator)) {
+            enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
+        }
+        enemy.addComponent(cmpAnimator);
+        cmpAnimator.activate(true);
+        console.log("Component", cmpAnimator);
+    }
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;
 (function (FlappyBug) {
@@ -117,20 +149,22 @@ var FlappyBug;
         cmpAudioCrash;
         flyingSound;
         crashSound;
+        framerateLow = 5;
+        framerateHigh = 40;
         constructor() {
             super("Player");
             this.initPlayer();
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updatePlayer);
         }
-        initPlayer() {
-            this.initPlayerBodyandPosition();
-            this.initAudio();
-            this.initFlyingSprites();
+        async initPlayer() {
+            await this.initPlayerBodyandPosition();
+            await this.initAudio();
+            await this.initFlyingSprites();
         }
         updatePlayer = (_event) => {
             this.handlePlayerMovement();
         };
-        initPlayerBodyandPosition() {
+        async initPlayerBodyandPosition() {
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("PlayerMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("PlayerMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
@@ -148,10 +182,10 @@ var FlappyBug;
         }
         handlePlayerMovement() {
             let vertical = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-            this.spriteNode.framerate = 5;
+            this.spriteNode.framerate = this.framerateLow;
             if (vertical) {
                 this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
-                this.spriteNode.framerate = 40;
+                this.spriteNode.framerate = this.framerateHigh;
             }
         }
         async initFlyingSprites() {
@@ -165,7 +199,7 @@ var FlappyBug;
             this.spriteNode.setAnimation(animation);
             this.spriteNode.setFrameDirection(1);
             this.spriteNode.mtxLocal.translateY(-0.5);
-            this.spriteNode.framerate = 5;
+            this.spriteNode.framerate = this.framerateLow;
             this.addChild(this.spriteNode);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
         }

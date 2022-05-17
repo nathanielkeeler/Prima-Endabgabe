@@ -1,5 +1,6 @@
 namespace FlappyBug {
 	import ƒ = FudgeCore;
+	import ƒAid = FudgeAid;
 
 	document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
@@ -8,6 +9,7 @@ namespace FlappyBug {
 	let sky: ƒ.Node;
 	let ground: ƒ.Node;
 	let player: Player;
+	let enemy: ƒ.Node;
 
 	let gameState: GameState;
 	let soundtrack: ƒ.ComponentAudio;
@@ -28,7 +30,7 @@ namespace FlappyBug {
 	function update(_event: Event): void {
 		ƒ.Physics.simulate();
 
-		if(gameState.gameRunning == true) {
+		if (gameState.gameRunning == true) {
 			animateBackground();
 			gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
 		}
@@ -44,7 +46,10 @@ namespace FlappyBug {
 		ground = root.getChildrenByName("Ground")[0];
 		player = new Player();
 		root.appendChild(player);
+		enemy = root.getChildrenByName("Enemy")[0];
+
 		initAudio();
+		initAnim();
 
 		gameState = new GameState();
 		gameState.gameRunning = true;
@@ -63,5 +68,41 @@ namespace FlappyBug {
 		soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
 		soundtrack.play(true);
 		soundtrack.volume = 7;
+	}
+
+	function initAnim(): void {
+		let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();
+		animseq.addKey(new ƒ.AnimationKey(0, 0));
+		animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
+		animseq.addKey(new ƒ.AnimationKey(3000, 0));
+
+		let animStructure: ƒ.AnimationStructure = {
+			components: {
+				ComponentTransform: [
+					{
+						"ƒ.ComponentTransform": {
+							mtxLocal: {
+								translation: {
+									y: animseq
+								}
+							}
+						}
+					}
+				]
+			}
+		};
+
+		let animation: ƒ.Animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
+
+		let cmpAnimator: ƒ.ComponentAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
+
+		if (enemy.getComponent(ƒ.ComponentAnimator)) {
+			enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
+		}
+
+		enemy.addComponent(cmpAnimator);
+		cmpAnimator.activate(true);
+
+		console.log("Component", cmpAnimator);
 	}
 }
