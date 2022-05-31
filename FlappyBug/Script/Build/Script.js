@@ -106,7 +106,7 @@ var FlappyBug;
         ƒ.AudioManager.default.listenTo(root);
         soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
         soundtrack.play(true);
-        soundtrack.volume = 7;
+        soundtrack.volume = 3;
     }
     function initAnim() {
         let animseq = new ƒ.AnimationSequence();

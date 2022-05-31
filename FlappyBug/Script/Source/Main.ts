@@ -1,6 +1,5 @@
 namespace FlappyBug {
 	import ƒ = FudgeCore;
-	import ƒAid = FudgeAid;
 
 	document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
@@ -67,7 +66,7 @@ namespace FlappyBug {
 		ƒ.AudioManager.default.listenTo(root);
 		soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
 		soundtrack.play(true);
-		soundtrack.volume = 7;
+		soundtrack.volume = 3;
 	}
 
 	function initAnim(): void {
