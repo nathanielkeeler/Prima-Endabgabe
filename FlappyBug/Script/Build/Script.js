@@ -71,6 +71,7 @@ var FlappyBug;
     function start(_event) {
         ƒ.AudioManager.default.listenTo(root);
         viewport = _event.detail;
+        viewport.camera.projectOrthographic();
         initGame();
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120, true);
@@ -135,7 +136,6 @@ var FlappyBug;
         }
         enemy.addComponent(cmpAnimator);
         cmpAnimator.activate(true);
-        console.log("Component", cmpAnimator);
     }
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;
@@ -143,7 +143,8 @@ var FlappyBug;
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     class Player extends ƒ.Node {
-        spriteNode;
+        spriteNodeFly;
+        spriteNodeCrash;
         rigidbody;
         cmpAudioFlying;
         cmpAudioCrash;
@@ -160,6 +161,7 @@ var FlappyBug;
             await this.initPlayerBodyandPosition();
             await this.initAudio();
             await this.initFlyingSprites();
+            await this.initCrashSprites();
         }
         updatePlayer = (_event) => {
             this.handlePlayerMovement();
@@ -182,10 +184,12 @@ var FlappyBug;
         }
         handlePlayerMovement() {
             let vertical = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-            this.spriteNode.framerate = this.framerateLow;
+            this.spriteNodeFly.framerate = this.framerateLow;
+            this.removeComponent(this.cmpAudioFlying);
             if (vertical) {
                 this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
-                this.spriteNode.framerate = this.framerateHigh;
+                this.spriteNodeFly.framerate = this.framerateHigh;
+                this.addComponent(this.cmpAudioFlying);
             }
         }
         async initFlyingSprites() {
@@ -194,35 +198,35 @@ var FlappyBug;
             let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
             let animation = new ƒAid.SpriteSheetAnimation("PlayerFlyingSpriteAnimation", coat);
             animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
-            this.spriteNode = new ƒAid.NodeSprite("Sprite");
-            this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
-            this.spriteNode.setAnimation(animation);
-            this.spriteNode.setFrameDirection(1);
-            this.spriteNode.mtxLocal.translateY(-0.5);
-            this.spriteNode.framerate = this.framerateLow;
-            this.addChild(this.spriteNode);
+            this.spriteNodeFly = new ƒAid.NodeSprite("SpriteFly");
+            this.spriteNodeFly.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
+            this.spriteNodeFly.setAnimation(animation);
+            this.spriteNodeFly.setFrameDirection(1);
+            this.spriteNodeFly.mtxLocal.translateY(-0.5);
+            this.spriteNodeFly.framerate = this.framerateLow;
+            this.addChild(this.spriteNodeFly);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
         }
-        // private async initCrashSprites(): Promise<void> {
-        // 	let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
-        // 	await imgSpriteSheet.load("Assets/images/sprites/bug-crash.png");
-        // 	let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
-        // 	let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", coat);
-        // 	animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
-        // 	this.spriteNode = new ƒAid.NodeSprite("Sprite");
-        // 	this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
-        // 	this.spriteNode.setAnimation(animation);
-        // 	this.spriteNode.setFrameDirection(1);
-        // 	this.spriteNode.mtxLocal.translateY(-0.5);
-        // 	this.spriteNode.framerate = 30;
-        // 	this.addChild(this.spriteNode);
-        // 	this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
-        // }
+        async initCrashSprites() {
+            let imgSpriteSheet = new ƒ.TextureImage();
+            await imgSpriteSheet.load("Assets/images/sprites/bug-crash.png");
+            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", coat);
+            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
+            this.spriteNodeCrash = new ƒAid.NodeSprite("SpriteCrash");
+            this.spriteNodeCrash.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
+            this.spriteNodeCrash.setAnimation(animation);
+            this.spriteNodeCrash.setFrameDirection(1);
+            this.spriteNodeCrash.mtxLocal.translateY(-0.5);
+            this.spriteNodeCrash.framerate = 30;
+            // this.addChild(this.spriteNodeCrash);
+            this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
+        }
         async initAudio() {
             this.flyingSound = new ƒ.Audio("Assets/audio/bug_flying.mp3");
             this.cmpAudioFlying = new ƒ.ComponentAudio(this.flyingSound, true, true);
             this.cmpAudioFlying.volume = 0.8;
-            this.addComponent(this.cmpAudioFlying);
+            // this.addComponent(this.cmpAudioFlying);
             this.crashSound = new ƒ.Audio("Assets/audio/bug_splat.mp3");
             this.cmpAudioCrash = new ƒ.ComponentAudio(this.crashSound, false, false);
             this.addComponent(this.cmpAudioCrash);

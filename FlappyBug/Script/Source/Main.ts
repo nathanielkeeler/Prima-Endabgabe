@@ -17,6 +17,7 @@ namespace FlappyBug {
 	function start(_event: CustomEvent): void {
 		ƒ.AudioManager.default.listenTo(root);
 		viewport = _event.detail;
+		viewport.camera.projectOrthographic();
 
 		initGame();
 
@@ -92,16 +93,12 @@ namespace FlappyBug {
 		};
 
 		let animation: ƒ.Animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
-
 		let cmpAnimator: ƒ.ComponentAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
-
 		if (enemy.getComponent(ƒ.ComponentAnimator)) {
 			enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
 		}
 
 		enemy.addComponent(cmpAnimator);
 		cmpAnimator.activate(true);
-
-		console.log("Component", cmpAnimator);
 	}
 }

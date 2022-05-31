@@ -22,7 +22,8 @@ declare namespace FlappyBug {
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
     class Player extends ƒ.Node {
-        private spriteNode;
+        private spriteNodeFly;
+        private spriteNodeCrash;
         private rigidbody;
         private cmpAudioFlying;
         private cmpAudioCrash;
@@ -36,6 +37,7 @@ declare namespace FlappyBug {
         private initPlayerBodyandPosition;
         private handlePlayerMovement;
         private initFlyingSprites;
+        private initCrashSprites;
         private initAudio;
     }
 }
