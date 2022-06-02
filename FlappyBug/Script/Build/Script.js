@@ -59,9 +59,6 @@ var FlappyBug;
 var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
-    let dialog;
-    window.addEventListener("load", init);
-    document.addEventListener("interactiveViewportStarted", start);
     let viewport;
     let root;
     let sky;
@@ -70,6 +67,9 @@ var FlappyBug;
     let enemy;
     let gameState;
     // let soundtrack: ƒ.ComponentAudio;
+    let dialog;
+    window.addEventListener("load", init);
+    document.addEventListener("interactiveViewportStarted", start);
     function init(_event) {
         dialog = document.querySelector("dialog");
         dialog.querySelector("h1").textContent = document.title;
@@ -78,11 +78,11 @@ var FlappyBug;
             dialog.close();
             startInteractiveViewport();
         });
-        // @ts-ignore
+        //@ts-ignore
         dialog.showModal();
     }
     async function startInteractiveViewport() {
-        // load resources referenced in the link-tagƒ
+        // load resources referenced in the link-tag
         await ƒ.Project.loadResourcesFromHTML();
         ƒ.Debug.log("Project:", ƒ.Project.resources);
         // pick the graph to show
@@ -97,19 +97,17 @@ var FlappyBug;
         let canvas = document.querySelector("canvas");
         let viewport = new ƒ.Viewport();
         viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
-        ƒ.Debug.log("Viewport:", viewport);
+        // ƒAid.Viewport.expandCameraToInteractiveOrbit(viewport);
         viewport.draw();
-        canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", {
-            bubbles: true,
-            detail: viewport,
-        }));
+        canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
     }
     function start(_event) {
         viewport = _event.detail;
+        viewport.camera.projectOrthographic();
+        viewport.camera.mtxPivot.translateZ(5);
+        viewport.camera.mtxPivot.rotateY(180);
         initGame();
         ƒ.AudioManager.default.listenTo(root);
-        viewport.camera.projectOrthographic();
-        viewport.camera.mtxPivot.translateZ(-5);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120, true);
     }
@@ -132,7 +130,7 @@ var FlappyBug;
         root.appendChild(player);
         enemy = root.getChildrenByName("Enemy")[0];
         // initAudio();
-        initAnim();
+        initEnemyAnim();
         gameState = new FlappyBug.GameState();
         gameState.gameRunning = true;
         let canvas = viewport.getCanvas();
@@ -146,9 +144,9 @@ var FlappyBug;
     // 	ƒ.AudioManager.default.listenTo(root);
     // 	soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
     // 	soundtrack.play(true);
-    // 	soundtrack.volume = 3;
+    // 	soundtrack.volume = 0.8;
     // }
-    function initAnim() {
+    function initEnemyAnim() {
         let animseq = new ƒ.AnimationSequence();
         animseq.addKey(new ƒ.AnimationKey(0, 0));
         animseq.addKey(new ƒ.AnimationKey(1500, 0.2));

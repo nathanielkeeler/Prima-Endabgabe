@@ -1,9 +1,6 @@
 namespace FlappyBug {
 	import ƒ = FudgeCore;
-
-	let dialog: HTMLDialogElement;
-	window.addEventListener("load", init);
-	document.addEventListener("interactiveViewportStarted", <EventListener>start);
+	import ƒAid = FudgeAid;
 
 	let viewport: ƒ.Viewport;
 	let root: ƒ.Node;
@@ -11,33 +8,34 @@ namespace FlappyBug {
 	let ground: ƒ.Node;
 	let player: Player;
 	let enemy: ƒ.Node;
-
 	let gameState: GameState;
 	// let soundtrack: ƒ.ComponentAudio;
-
-	function init(_event: Event): void {
+	
+	let dialog: HTMLDialogElement;
+	window.addEventListener("load", init);
+	document.addEventListener("interactiveViewportStarted", <EventListener>start);
+	
+	function init(_event: Event) {
 		dialog = document.querySelector("dialog");
 		dialog.querySelector("h1").textContent = document.title;
-		dialog.addEventListener("click", function (_event: Event) {
+		dialog.addEventListener("click", function (_event) {
 			// @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
 			dialog.close();
 			startInteractiveViewport();
 		});
-		// @ts-ignore
+		//@ts-ignore
 		dialog.showModal();
 	}
-
+	
 	async function startInteractiveViewport(): Promise<void> {
-		// load resources referenced in the link-tagƒ
+		// load resources referenced in the link-tag
 		await ƒ.Project.loadResourcesFromHTML();
 		ƒ.Debug.log("Project:", ƒ.Project.resources);
 		// pick the graph to show
-		let graph: ƒ.Graph = ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"] as ƒ.Graph;
+		let graph = <ƒ.Graph>ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"];
 		ƒ.Debug.log("Graph:", graph);
 		if (!graph) {
-			alert(
-				"Nothing to render. Create a graph with at least a mesh, material and probably some light"
-			);
+			alert("Nothing to render. Create a graph with at least a mesh, material and probably some light");
 			return;
 		}
 		// setup the viewport
@@ -45,29 +43,21 @@ namespace FlappyBug {
 		let canvas: HTMLCanvasElement = document.querySelector("canvas");
 		let viewport: ƒ.Viewport = new ƒ.Viewport();
 		viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
-		ƒ.Debug.log("Viewport:", viewport);
+		// ƒAid.Viewport.expandCameraToInteractiveOrbit(viewport);
 
 		viewport.draw();
-		canvas.dispatchEvent(
-			new CustomEvent("interactiveViewportStarted", {
-				bubbles: true,
-				detail: viewport,
-			})
-		);
+		canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
 	}
 
-	
 	function start(_event: CustomEvent): void {
 		viewport = _event.detail;
-		
+		viewport.camera.projectOrthographic();
+		viewport.camera.mtxPivot.translateZ(5);
+		viewport.camera.mtxPivot.rotateY(180);
+
 		initGame();
 
 		ƒ.AudioManager.default.listenTo(root);
-
-		viewport.camera.projectOrthographic();
-		viewport.camera.mtxPivot.translateZ(-5);
-
-
 		ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
 		ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120, true);
 	}
@@ -100,7 +90,7 @@ namespace FlappyBug {
 		enemy = root.getChildrenByName("Enemy")[0];
 
 		// initAudio();
-		initAnim();
+		initEnemyAnim();
 
 		gameState = new GameState();
 		gameState.gameRunning = true;
@@ -118,10 +108,10 @@ namespace FlappyBug {
 	// 	ƒ.AudioManager.default.listenTo(root);
 	// 	soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
 	// 	soundtrack.play(true);
-	// 	soundtrack.volume = 3;
+	// 	soundtrack.volume = 0.8;
 	// }
 
-	function initAnim(): void {
+	function initEnemyAnim(): void {
 		let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();
 		animseq.addKey(new ƒ.AnimationKey(0, 0));
 		animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
