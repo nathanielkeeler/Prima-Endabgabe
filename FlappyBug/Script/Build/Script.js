@@ -77,27 +77,24 @@ var FlappyBug;
             // @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
             dialog.close();
             startInteractiveViewport();
+            startGame();
         });
         //@ts-ignore
         dialog.showModal();
     }
     async function startInteractiveViewport() {
-        // load resources referenced in the link-tag
         await ƒ.Project.loadResourcesFromHTML();
         ƒ.Debug.log("Project:", ƒ.Project.resources);
-        // pick the graph to show
         let graph = ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"];
         ƒ.Debug.log("Graph:", graph);
         if (!graph) {
-            alert("Nothing to render. Create a graph with at least a mesh, material and probably some light");
+            alert("Nothing to render.");
             return;
         }
-        // setup the viewport
         let cmpCamera = new ƒ.ComponentCamera();
         let canvas = document.querySelector("canvas");
         let viewport = new ƒ.Viewport();
         viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
-        // ƒAid.Viewport.expandCameraToInteractiveOrbit(viewport);
         viewport.draw();
         canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
     }
@@ -117,8 +114,11 @@ var FlappyBug;
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
-    // function startGame(): void {
-    // }
+    function startGame() {
+        gameState = new FlappyBug.GameState();
+        gameState.gameRunning = true;
+        gameState.score = 0;
+    }
     function initGame() {
         root = viewport.getBranch();
         sky = root.getChildrenByName("Sky")[0];
@@ -128,14 +128,8 @@ var FlappyBug;
         enemy = root.getChildrenByName("Enemy")[0];
         // initAudio();
         initEnemyAnim();
-        gameState = new FlappyBug.GameState();
-        gameState.gameRunning = true;
         let canvas = viewport.getCanvas();
         canvas.requestPointerLock();
-    }
-    function animateBackground() {
-        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
-        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
     }
     // function initAudio(): void {
     // 	ƒ.AudioManager.default.listenTo(root);
@@ -176,6 +170,10 @@ var FlappyBug;
         viewport.camera.projectOrthographic();
         viewport.camera.mtxPivot.translateZ(4.5);
         viewport.camera.mtxPivot.rotateY(180);
+    }
+    function animateBackground() {
+        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
+        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
     }
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;

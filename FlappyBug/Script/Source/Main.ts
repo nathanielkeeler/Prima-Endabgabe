@@ -1,6 +1,5 @@
 namespace FlappyBug {
 	import ƒ = FudgeCore;
-	import ƒAid = FudgeAid;
 
 	let viewport: ƒ.Viewport;
 	let root: ƒ.Node;
@@ -22,32 +21,29 @@ namespace FlappyBug {
 			// @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
 			dialog.close();
 			startInteractiveViewport();
+			startGame();
 		});
 		//@ts-ignore
 		dialog.showModal();
 	}
 
 	async function startInteractiveViewport(): Promise<void> {
-		// load resources referenced in the link-tag
 		await ƒ.Project.loadResourcesFromHTML();
 		ƒ.Debug.log("Project:", ƒ.Project.resources);
-		// pick the graph to show
 		let graph = <ƒ.Graph>ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"];
 		ƒ.Debug.log("Graph:", graph);
 		if (!graph) {
-			alert("Nothing to render. Create a graph with at least a mesh, material and probably some light");
+			alert("Nothing to render.");
 			return;
 		}
-		// setup the viewport
 		let cmpCamera: ƒ.ComponentCamera = new ƒ.ComponentCamera();
 		let canvas: HTMLCanvasElement = document.querySelector("canvas");
 		let viewport: ƒ.Viewport = new ƒ.Viewport();
 		viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
-		// ƒAid.Viewport.expandCameraToInteractiveOrbit(viewport);
-
 		viewport.draw();
 		canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
 	}
+
 
 	function start(_event: CustomEvent): void {
 		initViewport(_event);
@@ -57,8 +53,6 @@ namespace FlappyBug {
 		ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
 		ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120, true);
 	}
-
-
 
 	function update(_event: Event): void {
 		ƒ.Physics.simulate();
@@ -73,9 +67,11 @@ namespace FlappyBug {
 	}
 
 
-	// function startGame(): void {
-
-	// }
+	function startGame(): void {
+		gameState = new GameState();
+		gameState.gameRunning = true;
+		gameState.score = 0;
+	}
 
 	function initGame(): void {
 		root = viewport.getBranch();
@@ -88,16 +84,8 @@ namespace FlappyBug {
 		// initAudio();
 		initEnemyAnim();
 
-		gameState = new GameState();
-		gameState.gameRunning = true;
-
 		let canvas: HTMLCanvasElement = viewport.getCanvas();
 		canvas.requestPointerLock();
-	}
-
-	function animateBackground(): void {
-		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
-		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
 	}
 
 	// function initAudio(): void {
@@ -144,5 +132,10 @@ namespace FlappyBug {
 		viewport.camera.projectOrthographic();
 		viewport.camera.mtxPivot.translateZ(4.5);
 		viewport.camera.mtxPivot.rotateY(180);
+	}
+
+	function animateBackground(): void {
+		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
+		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
 	}
 }
