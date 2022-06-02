@@ -10,11 +10,11 @@ namespace FlappyBug {
 	let enemy: ƒ.Node;
 	let gameState: GameState;
 	// let soundtrack: ƒ.ComponentAudio;
-	
+
 	let dialog: HTMLDialogElement;
 	window.addEventListener("load", init);
 	document.addEventListener("interactiveViewportStarted", <EventListener>start);
-	
+
 	function init(_event: Event) {
 		dialog = document.querySelector("dialog");
 		dialog.querySelector("h1").textContent = document.title;
@@ -26,7 +26,7 @@ namespace FlappyBug {
 		//@ts-ignore
 		dialog.showModal();
 	}
-	
+
 	async function startInteractiveViewport(): Promise<void> {
 		// load resources referenced in the link-tag
 		await ƒ.Project.loadResourcesFromHTML();
@@ -50,11 +50,7 @@ namespace FlappyBug {
 	}
 
 	function start(_event: CustomEvent): void {
-		viewport = _event.detail;
-		viewport.camera.projectOrthographic();
-		viewport.camera.mtxPivot.translateZ(4.5);
-		viewport.camera.mtxPivot.rotateY(180);
-
+		initViewport(_event);
 		initGame();
 
 		ƒ.AudioManager.default.listenTo(root);
@@ -141,5 +137,12 @@ namespace FlappyBug {
 
 		enemy.addComponent(cmpAnimator);
 		cmpAnimator.activate(true);
+	}
+
+	function initViewport(_event: CustomEvent): void {
+		viewport = _event.detail;
+		viewport.camera.projectOrthographic();
+		viewport.camera.mtxPivot.translateZ(4.5);
+		viewport.camera.mtxPivot.rotateY(180);
 	}
 }

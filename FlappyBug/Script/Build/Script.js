@@ -102,10 +102,7 @@ var FlappyBug;
         canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
     }
     function start(_event) {
-        viewport = _event.detail;
-        viewport.camera.projectOrthographic();
-        viewport.camera.mtxPivot.translateZ(4.5);
-        viewport.camera.mtxPivot.rotateY(180);
+        initViewport(_event);
         initGame();
         ƒ.AudioManager.default.listenTo(root);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
@@ -173,6 +170,12 @@ var FlappyBug;
         }
         enemy.addComponent(cmpAnimator);
         cmpAnimator.activate(true);
+    }
+    function initViewport(_event) {
+        viewport = _event.detail;
+        viewport.camera.projectOrthographic();
+        viewport.camera.mtxPivot.translateZ(4.5);
+        viewport.camera.mtxPivot.rotateY(180);
     }
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;
