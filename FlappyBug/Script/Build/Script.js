@@ -104,7 +104,7 @@ var FlappyBug;
     function start(_event) {
         viewport = _event.detail;
         viewport.camera.projectOrthographic();
-        viewport.camera.mtxPivot.translateZ(5);
+        viewport.camera.mtxPivot.translateZ(4.5);
         viewport.camera.mtxPivot.rotateY(180);
         initGame();
         ƒ.AudioManager.default.listenTo(root);

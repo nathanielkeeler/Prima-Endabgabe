@@ -52,7 +52,7 @@ namespace FlappyBug {
 	function start(_event: CustomEvent): void {
 		viewport = _event.detail;
 		viewport.camera.projectOrthographic();
-		viewport.camera.mtxPivot.translateZ(5);
+		viewport.camera.mtxPivot.translateZ(4.5);
 		viewport.camera.mtxPivot.rotateY(180);
 
 		initGame();
