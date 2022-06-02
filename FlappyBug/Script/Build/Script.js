@@ -59,6 +59,8 @@ var FlappyBug;
 var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
+    let dialog;
+    window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
     let viewport;
     let root;
@@ -67,12 +69,47 @@ var FlappyBug;
     let player;
     let enemy;
     let gameState;
-    let soundtrack;
+    // let soundtrack: ƒ.ComponentAudio;
+    function init(_event) {
+        dialog = document.querySelector("dialog");
+        dialog.querySelector("h1").textContent = document.title;
+        dialog.addEventListener("click", function (_event) {
+            // @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
+            dialog.close();
+            startInteractiveViewport();
+        });
+        // @ts-ignore
+        dialog.showModal();
+    }
+    async function startInteractiveViewport() {
+        // load resources referenced in the link-tagƒ
+        await ƒ.Project.loadResourcesFromHTML();
+        ƒ.Debug.log("Project:", ƒ.Project.resources);
+        // pick the graph to show
+        let graph = ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"];
+        ƒ.Debug.log("Graph:", graph);
+        if (!graph) {
+            alert("Nothing to render. Create a graph with at least a mesh, material and probably some light");
+            return;
+        }
+        // setup the viewport
+        let cmpCamera = new ƒ.ComponentCamera();
+        let canvas = document.querySelector("canvas");
+        let viewport = new ƒ.Viewport();
+        viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
+        ƒ.Debug.log("Viewport:", viewport);
+        viewport.draw();
+        canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", {
+            bubbles: true,
+            detail: viewport,
+        }));
+    }
     function start(_event) {
-        ƒ.AudioManager.default.listenTo(root);
         viewport = _event.detail;
-        viewport.camera.projectOrthographic();
         initGame();
+        ƒ.AudioManager.default.listenTo(root);
+        viewport.camera.projectOrthographic();
+        viewport.camera.mtxPivot.translateZ(-5);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120, true);
     }
@@ -85,6 +122,8 @@ var FlappyBug;
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
+    // function startGame(): void {
+    // }
     function initGame() {
         root = viewport.getBranch();
         sky = root.getChildrenByName("Sky")[0];
@@ -92,7 +131,7 @@ var FlappyBug;
         player = new FlappyBug.Player();
         root.appendChild(player);
         enemy = root.getChildrenByName("Enemy")[0];
-        initAudio();
+        // initAudio();
         initAnim();
         gameState = new FlappyBug.GameState();
         gameState.gameRunning = true;
@@ -103,12 +142,12 @@ var FlappyBug;
         sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
         ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
     }
-    function initAudio() {
-        ƒ.AudioManager.default.listenTo(root);
-        soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
-        soundtrack.play(true);
-        soundtrack.volume = 3;
-    }
+    // function initAudio(): void {
+    // 	ƒ.AudioManager.default.listenTo(root);
+    // 	soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
+    // 	soundtrack.play(true);
+    // 	soundtrack.volume = 3;
+    // }
     function initAnim() {
         let animseq = new ƒ.AnimationSequence();
         animseq.addKey(new ƒ.AnimationKey(0, 0));
@@ -151,7 +190,7 @@ var FlappyBug;
         flyingSound;
         crashSound;
         framerateLow = 5;
-        framerateHigh = 40;
+        // private framerateHigh: number = 40;
         constructor() {
             super("Player");
             this.initPlayer();
@@ -184,11 +223,11 @@ var FlappyBug;
         }
         handlePlayerMovement() {
             let vertical = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-            this.spriteNodeFly.framerate = this.framerateLow;
+            // this.spriteNodeFly.framerate = this.framerateLow;
             this.removeComponent(this.cmpAudioFlying);
             if (vertical) {
                 this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
-                this.spriteNodeFly.framerate = this.framerateHigh;
+                // this.spriteNodeFly.framerate = this.framerateHigh;
                 this.addComponent(this.cmpAudioFlying);
             }
         }

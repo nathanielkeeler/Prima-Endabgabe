@@ -12,7 +12,7 @@ namespace FlappyBug {
 		private flyingSound: ƒ.Audio;
 		private crashSound: ƒ.Audio;
 		private framerateLow: number = 5;
-		private framerateHigh: number = 40;
+		// private framerateHigh: number = 40;
 
 		constructor() {
 			super("Player");
@@ -53,11 +53,11 @@ namespace FlappyBug {
 
 		private handlePlayerMovement() {
 			let vertical: boolean = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-			this.spriteNodeFly.framerate = this.framerateLow;
+			// this.spriteNodeFly.framerate = this.framerateLow;
 			this.removeComponent(this.cmpAudioFlying);
 			if (vertical) {
 				this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
-				this.spriteNodeFly.framerate = this.framerateHigh;
+				// this.spriteNodeFly.framerate = this.framerateHigh;
 				this.addComponent(this.cmpAudioFlying);
 			}
 		}

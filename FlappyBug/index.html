@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="styles.css" />
 
     <!--Editor settings of this project-->
-    <meta type="settings" autoview="Graph|2022-04-08T13:27:53.880Z|73360" project="{'name':'FlappyBug','includeAutoViewScript':true,'graphAutoView':'Graph|2022-04-08T13:27:53.880Z|73360'}" panels="[{'type':'PanelProject','state':{}},{'type':'PanelGraph','state':{'graph':'Graph|2022-04-08T13:27:53.880Z|73360'}}]" />
+    <meta type="settings" autoview="Graph|2022-04-08T13:27:53.880Z|73360" project="{'name':'FlappyBug','includeAutoViewScript':false,'graphAutoView':'Graph|2022-04-08T13:27:53.880Z|73360'}" panels="[{'type':'PanelProject','state':{}},{'type':'PanelGraph','state':{'graph':'Graph|2022-04-08T13:27:53.880Z|73360'}}]" />
 
     <!--Activate the following line to include the FUDGE-version of Oimo-Physics. You may want to download a local copy to work offline and be independent from future changes!-->
     <script type="text/javascript" src="../Fudge/Physics/OimoPhysics.js"></script>
@@ -22,7 +22,7 @@
     <!--Load custom scripts-->
     <script type="text/javascript" src="Script/Build/Script.js" editor="true"></script>
 
-    <script name="autoView">(function (_graphId) {
+    <!-- <script name="autoView">(function (_graphId) {
             /**
              * AutoView-Script
              * Loads and displays the selected graph and implements a basic orbit camera
@@ -76,7 +76,8 @@
                 canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
             }
         })(document.head.querySelector("meta[autoView]").getAttribute("autoView"));
-    </script>
+    </script> -->
+
 </head>
 
 <body>
@@ -94,10 +95,6 @@
             <text>Score</text> <input key="score" id="score" type="number" min="0" max="999999" value="1" step="1" />
         </div>
     </div>
-
-
-
-
 
 
 
