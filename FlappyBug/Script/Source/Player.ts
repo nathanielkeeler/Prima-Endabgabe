@@ -11,8 +11,8 @@ namespace FlappyBug {
 		private cmpAudioCrash: ƒ.ComponentAudio;
 		private flyingSound: ƒ.Audio;
 		private crashSound: ƒ.Audio;
-		private framerateLow: number = 5;
-		// private framerateHigh: number = 40;
+		public framerateLow: number = 5;
+		public framerateHigh: number = 40;
 
 		constructor() {
 			super("Player");
@@ -53,11 +53,11 @@ namespace FlappyBug {
 
 		private handlePlayerMovement() {
 			let vertical: boolean = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-			// this.spriteNodeFly.framerate = this.framerateLow;
+			this.spriteNodeFly.framerate = this.framerateLow;
 			this.removeComponent(this.cmpAudioFlying);
 			if (vertical) {
 				this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
-				// this.spriteNodeFly.framerate = this.framerateHigh;
+				this.spriteNodeFly.framerate = this.framerateHigh;
 				this.addComponent(this.cmpAudioFlying);
 			}
 		}
@@ -103,12 +103,16 @@ namespace FlappyBug {
 		private async initAudio(): Promise<void> {
 			this.flyingSound = new ƒ.Audio("Assets/audio/bug_flying.mp3");
 			this.cmpAudioFlying = new ƒ.ComponentAudio(this.flyingSound, true, true);
-			this.cmpAudioFlying.volume = 0.8;
+			this.cmpAudioFlying.volume = 0.5;
 			// this.addComponent(this.cmpAudioFlying);
 
 			this.crashSound = new ƒ.Audio("Assets/audio/bug_splat.mp3");
 			this.cmpAudioCrash = new ƒ.ComponentAudio(this.crashSound, false, false);
 			this.addComponent(this.cmpAudioCrash);
 		}
+
+		// private checkCollision(): void {
+			
+		// }
 	}
 }

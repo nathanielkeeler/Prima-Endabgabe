@@ -14,6 +14,8 @@ namespace FlappyBug {
 	window.addEventListener("load", init);
 	document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
+
+	// Imported the following two functions from index.html
 	function init(_event: Event) {
 		dialog = document.querySelector("dialog");
 		dialog.querySelector("h1").textContent = document.title;
@@ -21,12 +23,10 @@ namespace FlappyBug {
 			// @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
 			dialog.close();
 			startInteractiveViewport();
-			startGame();
 		});
 		//@ts-ignore
 		dialog.showModal();
 	}
-
 	async function startInteractiveViewport(): Promise<void> {
 		await ƒ.Project.loadResourcesFromHTML();
 		ƒ.Debug.log("Project:", ƒ.Project.resources);
@@ -45,8 +45,10 @@ namespace FlappyBug {
 	}
 
 
+
 	function start(_event: CustomEvent): void {
 		initViewport(_event);
+		startGame();
 		initGame();
 
 		ƒ.AudioManager.default.listenTo(root);
@@ -59,12 +61,13 @@ namespace FlappyBug {
 
 		if (gameState.gameRunning == true) {
 			animateBackground();
-			gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
+				gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
 		}
 
 		viewport.draw();
 		ƒ.AudioManager.default.update();
 	}
+
 
 
 	function startGame(): void {
@@ -79,10 +82,11 @@ namespace FlappyBug {
 		ground = root.getChildrenByName("Ground")[0];
 		player = new Player();
 		root.appendChild(player);
-		enemy = root.getChildrenByName("Enemy")[0];
+		enemy = root.getChildrenByName("Enemies")[0].getChildrenByName("Enemy")[0];
+		gameState.score = 0;
 
 		// initAudio();
-		initEnemyAnim();
+		initEnemyAnimation();
 
 		let canvas: HTMLCanvasElement = viewport.getCanvas();
 		canvas.requestPointerLock();
@@ -95,7 +99,7 @@ namespace FlappyBug {
 	// 	soundtrack.volume = 0.8;
 	// }
 
-	function initEnemyAnim(): void {
+	function initEnemyAnimation(): void {
 		let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();
 		animseq.addKey(new ƒ.AnimationKey(0, 0));
 		animseq.addKey(new ƒ.AnimationKey(1500, 0.2));

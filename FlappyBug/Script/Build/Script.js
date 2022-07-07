@@ -70,6 +70,7 @@ var FlappyBug;
     let dialog;
     window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
+    // Imported the following two functions from index.html
     function init(_event) {
         dialog = document.querySelector("dialog");
         dialog.querySelector("h1").textContent = document.title;
@@ -77,7 +78,6 @@ var FlappyBug;
             // @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
             dialog.close();
             startInteractiveViewport();
-            startGame();
         });
         //@ts-ignore
         dialog.showModal();
@@ -100,6 +100,7 @@ var FlappyBug;
     }
     function start(_event) {
         initViewport(_event);
+        startGame();
         initGame();
         ƒ.AudioManager.default.listenTo(root);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
@@ -125,9 +126,10 @@ var FlappyBug;
         ground = root.getChildrenByName("Ground")[0];
         player = new FlappyBug.Player();
         root.appendChild(player);
-        enemy = root.getChildrenByName("Enemy")[0];
+        enemy = root.getChildrenByName("Enemies")[0].getChildrenByName("Enemy")[0];
+        gameState.score = 0;
         // initAudio();
-        initEnemyAnim();
+        initEnemyAnimation();
         let canvas = viewport.getCanvas();
         canvas.requestPointerLock();
     }
@@ -137,7 +139,7 @@ var FlappyBug;
     // 	soundtrack.play(true);
     // 	soundtrack.volume = 0.8;
     // }
-    function initEnemyAnim() {
+    function initEnemyAnimation() {
         let animseq = new ƒ.AnimationSequence();
         animseq.addKey(new ƒ.AnimationKey(0, 0));
         animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
@@ -189,7 +191,7 @@ var FlappyBug;
         flyingSound;
         crashSound;
         framerateLow = 5;
-        // private framerateHigh: number = 40;
+        framerateHigh = 40;
         constructor() {
             super("Player");
             this.initPlayer();
@@ -222,11 +224,11 @@ var FlappyBug;
         }
         handlePlayerMovement() {
             let vertical = ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE, ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]);
-            // this.spriteNodeFly.framerate = this.framerateLow;
+            this.spriteNodeFly.framerate = this.framerateLow;
             this.removeComponent(this.cmpAudioFlying);
             if (vertical) {
                 this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
-                // this.spriteNodeFly.framerate = this.framerateHigh;
+                this.spriteNodeFly.framerate = this.framerateHigh;
                 this.addComponent(this.cmpAudioFlying);
             }
         }
@@ -263,7 +265,7 @@ var FlappyBug;
         async initAudio() {
             this.flyingSound = new ƒ.Audio("Assets/audio/bug_flying.mp3");
             this.cmpAudioFlying = new ƒ.ComponentAudio(this.flyingSound, true, true);
-            this.cmpAudioFlying.volume = 0.8;
+            this.cmpAudioFlying.volume = 0.5;
             // this.addComponent(this.cmpAudioFlying);
             this.crashSound = new ƒ.Audio("Assets/audio/bug_splat.mp3");
             this.cmpAudioCrash = new ƒ.ComponentAudio(this.crashSound, false, false);
