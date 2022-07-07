@@ -112,7 +112,7 @@ namespace FlappyBug {
 		}
 
 		// private checkCollision(): void {
-			
+
 		// }
 	}
 }

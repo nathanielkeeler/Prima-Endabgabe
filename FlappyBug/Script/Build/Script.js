@@ -1,4 +1,50 @@
 "use strict";
+var FlappyBug;
+(function (FlappyBug) {
+    var ƒ = FudgeCore;
+    var ƒAid = FudgeAid;
+    class Coin extends ƒ.Node {
+        // private rigidbody: ƒ.ComponentRigidbody;
+        spriteNode;
+        constructor() {
+            super("Coin");
+            this.initCoin();
+        }
+        async initCoin() {
+            await this.initPosition();
+            await this.initSprites();
+        }
+        async initPosition() {
+            this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("CoinMesh")));
+            this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("CoinMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
+            this.addComponent(new ƒ.ComponentTransform());
+            this.mtxLocal.translation = new ƒ.Vector3(0, 0, 0);
+            this.mtxLocal.scaling = new ƒ.Vector3(0.1, 0.1, 0.1);
+            // this.rigidbody = new ƒ.ComponentRigidbody();
+            // this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
+            // this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            // this.rigidbody.typeBody = ƒ.BODY_TYPE.KINEMATIC;
+            // this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.SPHERE;
+            // this.addComponent(this.rigidbody);
+        }
+        async initSprites() {
+            let imgSpriteSheet = new ƒ.TextureImage();
+            await imgSpriteSheet.load("Assets/images/sprites/coin.png");
+            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("CoinSpriteAnimation", coat);
+            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 170, 170), 6, 165, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(200));
+            this.spriteNode = new ƒAid.NodeSprite("CoinSprite");
+            this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
+            this.spriteNode.setAnimation(animation);
+            this.spriteNode.setFrameDirection(1);
+            this.spriteNode.mtxLocal.translateY(-0.5);
+            this.spriteNode.framerate = 5;
+            this.addChild(this.spriteNode);
+            this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
+        }
+    }
+    FlappyBug.Coin = Coin;
+})(FlappyBug || (FlappyBug = {}));
 var Script;
 (function (Script) {
     var ƒ = FudgeCore;
@@ -65,42 +111,19 @@ var FlappyBug;
     let ground;
     let player;
     let enemy;
+    let collectibles;
+    let coin;
     let gameState;
+    let speed = 1;
     // let soundtrack: ƒ.ComponentAudio;
     let dialog;
     window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
-    // Imported the following two functions from index.html
-    function init(_event) {
-        dialog = document.querySelector("dialog");
-        dialog.querySelector("h1").textContent = document.title;
-        dialog.addEventListener("click", function (_event) {
-            // @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
-            dialog.close();
-            startInteractiveViewport();
-        });
-        //@ts-ignore
-        dialog.showModal();
-    }
-    async function startInteractiveViewport() {
-        await ƒ.Project.loadResourcesFromHTML();
-        ƒ.Debug.log("Project:", ƒ.Project.resources);
-        let graph = ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"];
-        ƒ.Debug.log("Graph:", graph);
-        if (!graph) {
-            alert("Nothing to render.");
-            return;
-        }
-        let cmpCamera = new ƒ.ComponentCamera();
-        let canvas = document.querySelector("canvas");
-        let viewport = new ƒ.Viewport();
-        viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
-        viewport.draw();
-        canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
-    }
     function start(_event) {
         initViewport(_event);
-        startGame();
+        gameState = new FlappyBug.GameState();
+        gameState.gameRunning = true;
+        gameState.score = 0;
         initGame();
         ƒ.AudioManager.default.listenTo(root);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
@@ -115,17 +138,15 @@ var FlappyBug;
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
-    function startGame() {
-        gameState = new FlappyBug.GameState();
-        gameState.gameRunning = true;
-        gameState.score = 0;
-    }
     function initGame() {
         root = viewport.getBranch();
         sky = root.getChildrenByName("Sky")[0];
         ground = root.getChildrenByName("Ground")[0];
         player = new FlappyBug.Player();
+        collectibles = root.getChildrenByName("Collectibles")[0];
         root.appendChild(player);
+        coin = new FlappyBug.Coin();
+        collectibles.appendChild(coin);
         enemy = root.getChildrenByName("Enemies")[0].getChildrenByName("Enemy")[0];
         gameState.score = 0;
         // initAudio();
@@ -174,8 +195,37 @@ var FlappyBug;
         viewport.camera.mtxPivot.rotateY(180);
     }
     function animateBackground() {
-        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
-        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
+        let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.1 * deltaTime * speed);
+        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.5 * deltaTime * speed);
+    }
+    // Imported the following two functions from index.html
+    function init(_event) {
+        dialog = document.querySelector("dialog");
+        dialog.querySelector("h1").textContent = document.title;
+        dialog.addEventListener("click", function (_event) {
+            // @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
+            dialog.close();
+            startInteractiveViewport();
+        });
+        //@ts-ignore
+        dialog.showModal();
+    }
+    async function startInteractiveViewport() {
+        await ƒ.Project.loadResourcesFromHTML();
+        ƒ.Debug.log("Project:", ƒ.Project.resources);
+        let graph = ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"];
+        ƒ.Debug.log("Graph:", graph);
+        if (!graph) {
+            alert("Nothing to render.");
+            return;
+        }
+        let cmpCamera = new ƒ.ComponentCamera();
+        let canvas = document.querySelector("canvas");
+        let viewport = new ƒ.Viewport();
+        viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
+        viewport.draw();
+        canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
     }
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;

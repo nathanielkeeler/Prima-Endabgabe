@@ -7,7 +7,10 @@ namespace FlappyBug {
 	let ground: ƒ.Node;
 	let player: Player;
 	let enemy: ƒ.Node;
+	let collectibles: ƒ.Node;
+	let coin: Coin;
 	let gameState: GameState;
+	let speed: number = 1;
 	// let soundtrack: ƒ.ComponentAudio;
 
 	let dialog: HTMLDialogElement;
@@ -15,40 +18,12 @@ namespace FlappyBug {
 	document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
 
-	// Imported the following two functions from index.html
-	function init(_event: Event) {
-		dialog = document.querySelector("dialog");
-		dialog.querySelector("h1").textContent = document.title;
-		dialog.addEventListener("click", function (_event) {
-			// @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
-			dialog.close();
-			startInteractiveViewport();
-		});
-		//@ts-ignore
-		dialog.showModal();
-	}
-	async function startInteractiveViewport(): Promise<void> {
-		await ƒ.Project.loadResourcesFromHTML();
-		ƒ.Debug.log("Project:", ƒ.Project.resources);
-		let graph = <ƒ.Graph>ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"];
-		ƒ.Debug.log("Graph:", graph);
-		if (!graph) {
-			alert("Nothing to render.");
-			return;
-		}
-		let cmpCamera: ƒ.ComponentCamera = new ƒ.ComponentCamera();
-		let canvas: HTMLCanvasElement = document.querySelector("canvas");
-		let viewport: ƒ.Viewport = new ƒ.Viewport();
-		viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
-		viewport.draw();
-		canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
-	}
-
-
-
 	function start(_event: CustomEvent): void {
 		initViewport(_event);
-		startGame();
+		gameState = new GameState();
+		gameState.gameRunning = true;
+		gameState.score = 0;
+
 		initGame();
 
 		ƒ.AudioManager.default.listenTo(root);
@@ -61,7 +36,7 @@ namespace FlappyBug {
 
 		if (gameState.gameRunning == true) {
 			animateBackground();
-				gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
+			gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
 		}
 
 		viewport.draw();
@@ -69,19 +44,15 @@ namespace FlappyBug {
 	}
 
 
-
-	function startGame(): void {
-		gameState = new GameState();
-		gameState.gameRunning = true;
-		gameState.score = 0;
-	}
-
 	function initGame(): void {
 		root = viewport.getBranch();
 		sky = root.getChildrenByName("Sky")[0];
 		ground = root.getChildrenByName("Ground")[0];
 		player = new Player();
+		collectibles = root.getChildrenByName("Collectibles")[0];
 		root.appendChild(player);
+		coin = new Coin();
+		collectibles.appendChild(coin);
 		enemy = root.getChildrenByName("Enemies")[0].getChildrenByName("Enemy")[0];
 		gameState.score = 0;
 
@@ -139,7 +110,39 @@ namespace FlappyBug {
 	}
 
 	function animateBackground(): void {
-		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.001);
-		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.005);
+		let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
+		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.1 * deltaTime * speed);
+		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.5 * deltaTime * speed);
+	}
+
+
+
+	// Imported the following two functions from index.html
+	function init(_event: Event) {
+		dialog = document.querySelector("dialog");
+		dialog.querySelector("h1").textContent = document.title;
+		dialog.addEventListener("click", function (_event) {
+			// @ts-ignore until HTMLDialog is implemented by all browsers and available in dom.d.ts
+			dialog.close();
+			startInteractiveViewport();
+		});
+		//@ts-ignore
+		dialog.showModal();
+	}
+	async function startInteractiveViewport(): Promise<void> {
+		await ƒ.Project.loadResourcesFromHTML();
+		ƒ.Debug.log("Project:", ƒ.Project.resources);
+		let graph = <ƒ.Graph>ƒ.Project.resources["Graph|2022-04-08T13:27:53.880Z|73360"];
+		ƒ.Debug.log("Graph:", graph);
+		if (!graph) {
+			alert("Nothing to render.");
+			return;
+		}
+		let cmpCamera: ƒ.ComponentCamera = new ƒ.ComponentCamera();
+		let canvas: HTMLCanvasElement = document.querySelector("canvas");
+		let viewport: ƒ.Viewport = new ƒ.Viewport();
+		viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
+		viewport.draw();
+		canvas.dispatchEvent(new CustomEvent("interactiveViewportStarted", { bubbles: true, detail: viewport }));
 	}
 }

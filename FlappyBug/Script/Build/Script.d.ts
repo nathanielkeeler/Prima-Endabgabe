@@ -1,3 +1,13 @@
+declare namespace FlappyBug {
+    import ƒ = FudgeCore;
+    class Coin extends ƒ.Node {
+        private spriteNode;
+        constructor();
+        private initCoin;
+        private initPosition;
+        private initSprites;
+    }
+}
 declare namespace Script {
     import ƒ = FudgeCore;
     class CustomComponentScript extends ƒ.ComponentScript {

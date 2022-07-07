@@ -350,6 +350,14 @@
               }
             ]
           }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Collectibles",
+            "active": true,
+            "components": {},
+            "children": []
+          }
         }
       ],
       "idResource": "Graph|2022-04-08T13:27:53.880Z|73360",
