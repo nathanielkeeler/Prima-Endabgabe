@@ -105,6 +105,52 @@ var FlappyBug;
 var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
+    var ƒAid = FudgeAid;
+    class Heart extends ƒ.Node {
+        // private rigidbody: ƒ.ComponentRigidbody;
+        spriteNode;
+        constructor() {
+            super("Heart");
+            this.initHeart();
+        }
+        async initHeart() {
+            await this.initPosition();
+            await this.initSprites();
+        }
+        async initPosition() {
+            this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("HeartMesh")));
+            this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("HeartMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
+            this.addComponent(new ƒ.ComponentTransform());
+            this.mtxLocal.translation = new ƒ.Vector3(0, 0.2, 0);
+            this.mtxLocal.scaling = new ƒ.Vector3(0.1, 0.1, 0.1);
+            // this.rigidbody = new ƒ.ComponentRigidbody();
+            // this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
+            // this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            // this.rigidbody.typeBody = ƒ.BODY_TYPE.KINEMATIC;
+            // this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.SPHERE;
+            // this.addComponent(this.rigidbody);
+        }
+        async initSprites() {
+            let imgSpriteSheet = new ƒ.TextureImage();
+            await imgSpriteSheet.load("Assets/images/sprites/heart.png");
+            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("HeartSpriteAnimation", coat);
+            animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 564, 768), 6, 400, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(0));
+            this.spriteNode = new ƒAid.NodeSprite("HeartSprite");
+            this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
+            this.spriteNode.setAnimation(animation);
+            this.spriteNode.setFrameDirection(1);
+            this.spriteNode.mtxLocal.translateY(0);
+            this.spriteNode.framerate = 1;
+            this.addChild(this.spriteNode);
+            this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
+        }
+    }
+    FlappyBug.Heart = Heart;
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
+    var ƒ = FudgeCore;
     let viewport;
     let root;
     let sky;
@@ -113,6 +159,7 @@ var FlappyBug;
     let enemy;
     let collectibles;
     let coin;
+    let heart;
     let gameState;
     let speed = 1;
     // let soundtrack: ƒ.ComponentAudio;
@@ -143,16 +190,18 @@ var FlappyBug;
         sky = root.getChildrenByName("Sky")[0];
         ground = root.getChildrenByName("Ground")[0];
         player = new FlappyBug.Player();
-        collectibles = root.getChildrenByName("Collectibles")[0];
         root.appendChild(player);
+        collectibles = root.getChildrenByName("Collectibles")[0];
         coin = new FlappyBug.Coin();
         collectibles.appendChild(coin);
+        heart = new FlappyBug.Heart();
+        collectibles.appendChild(heart);
         enemy = root.getChildrenByName("Enemies")[0].getChildrenByName("Enemy")[0];
         gameState.score = 0;
         // initAudio();
         initEnemyAnimation();
         let canvas = viewport.getCanvas();
-        canvas.requestPointerLock();
+        // canvas.requestPointerLock();
     }
     // function initAudio(): void {
     // 	ƒ.AudioManager.default.listenTo(root);

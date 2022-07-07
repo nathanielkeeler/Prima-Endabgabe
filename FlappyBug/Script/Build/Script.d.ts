@@ -28,6 +28,16 @@ declare namespace FlappyBug {
     }
 }
 declare namespace FlappyBug {
+    import ƒ = FudgeCore;
+    class Heart extends ƒ.Node {
+        private spriteNode;
+        constructor();
+        private initHeart;
+        private initPosition;
+        private initSprites;
+    }
+}
+declare namespace FlappyBug {
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;

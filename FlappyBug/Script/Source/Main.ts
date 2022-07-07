@@ -9,6 +9,7 @@ namespace FlappyBug {
 	let enemy: ƒ.Node;
 	let collectibles: ƒ.Node;
 	let coin: Coin;
+	let heart: Heart;
 	let gameState: GameState;
 	let speed: number = 1;
 	// let soundtrack: ƒ.ComponentAudio;
@@ -49,10 +50,14 @@ namespace FlappyBug {
 		sky = root.getChildrenByName("Sky")[0];
 		ground = root.getChildrenByName("Ground")[0];
 		player = new Player();
-		collectibles = root.getChildrenByName("Collectibles")[0];
 		root.appendChild(player);
+		
+		collectibles = root.getChildrenByName("Collectibles")[0];
 		coin = new Coin();
 		collectibles.appendChild(coin);
+		heart = new Heart();
+		collectibles.appendChild(heart);
+
 		enemy = root.getChildrenByName("Enemies")[0].getChildrenByName("Enemy")[0];
 		gameState.score = 0;
 
@@ -60,7 +65,7 @@ namespace FlappyBug {
 		initEnemyAnimation();
 
 		let canvas: HTMLCanvasElement = viewport.getCanvas();
-		canvas.requestPointerLock();
+		// canvas.requestPointerLock();
 	}
 
 	// function initAudio(): void {
