@@ -233,6 +233,10 @@ var FlappyBug;
             animateBackground();
             gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
         }
+        if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && speed < 3) {
+            document.dispatchEvent(new Event("increaseGameSpeed"));
+        }
+        document.addEventListener("increaseGameSpeed", increaseGameSpeed);
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
@@ -299,6 +303,9 @@ var FlappyBug;
         let deltaTime = ƒ.Loop.timeFrameReal / 1000;
         sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * speed);
         ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * speed);
+    }
+    function increaseGameSpeed() {
+        console.log(speed += 0.025);
     }
     // Imported the following two functions from index.html
     function init(_event) {
