@@ -2,6 +2,7 @@ namespace FlappyBug {
 	import ƒ = FudgeCore;
 
 	let viewport: ƒ.Viewport;
+	let hud: HTMLElement;
 	let root: ƒ.Node;
 	let sky: ƒ.Node;
 	let ground: ƒ.Node;
@@ -71,6 +72,7 @@ namespace FlappyBug {
 		enemies.appendChild(enemy);
 
 		ƒ.Time.game.set(0);
+		hud.style.visibility = "visible";
 		gameState = new GameState();
 		gameState.gameRunning = true;
 		gameState.score = 0;
@@ -171,6 +173,8 @@ namespace FlappyBug {
 
 	// Imported the following two functions from index.html
 	function init(_event: Event) {
+		hud = document.getElementById("HUD");
+		hud.style.visibility = "hidden";
 		dialog = document.querySelector("dialog");
 		dialog.querySelector("h1").textContent = document.title;
 		dialog.addEventListener("click", function (_event) {

@@ -207,6 +207,7 @@ var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
     let viewport;
+    let hud;
     let root;
     let sky;
     let ground;
@@ -258,6 +259,7 @@ var FlappyBug;
         enemy = new FlappyBug.Enemy();
         enemies.appendChild(enemy);
         ƒ.Time.game.set(0);
+        hud.style.visibility = "visible";
         gameState = new FlappyBug.GameState();
         gameState.gameRunning = true;
         gameState.score = 0;
@@ -341,6 +343,8 @@ var FlappyBug;
     }
     // Imported the following two functions from index.html
     function init(_event) {
+        hud = document.getElementById("HUD");
+        hud.style.visibility = "hidden";
         dialog = document.querySelector("dialog");
         dialog.querySelector("h1").textContent = document.title;
         dialog.addEventListener("click", function (_event) {
