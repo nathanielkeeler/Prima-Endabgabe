@@ -217,17 +217,14 @@ var FlappyBug;
     let coin;
     let heart;
     let gameState;
-    let speed = 1;
+    let speed;
+    let startSpeed = 1;
     // let soundtrack: ƒ.ComponentAudio;
     let dialog;
     window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         initViewport(_event);
-        ƒ.Time.game.set(0);
-        gameState = new FlappyBug.GameState();
-        gameState.gameRunning = true;
-        gameState.score = 0;
         initGame();
         ƒ.AudioManager.default.listenTo(root);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
@@ -239,7 +236,7 @@ var FlappyBug;
             animateBackground();
             gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
         }
-        if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && speed < 3) {
+        if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && startSpeed < 3) {
             document.dispatchEvent(new Event("increaseGameSpeed"));
         }
         document.addEventListener("increaseGameSpeed", increaseGameSpeed);
@@ -260,6 +257,11 @@ var FlappyBug;
         enemies = root.getChildrenByName("Enemies")[0];
         enemy = new FlappyBug.Enemy();
         enemies.appendChild(enemy);
+        ƒ.Time.game.set(0);
+        gameState = new FlappyBug.GameState();
+        gameState.gameRunning = true;
+        gameState.score = 0;
+        speed = startSpeed;
         // initAudio();
         initEnemyAnimation();
         // let canvas: HTMLCanvasElement = viewport.getCanvas();
@@ -312,6 +314,30 @@ var FlappyBug;
     }
     function increaseGameSpeed() {
         console.log(speed += 0.025);
+    }
+    async function getData() {
+        let data = await fetchData();
+        let fetchedHighscore = data.data.startHighscore;
+        startSpeed = data.data.startSpeed;
+        gameState.hScore = localStorage.getItem("HighScore");
+        if (fetchedHighscore > gameState.hScore)
+            gameState.hScore = fetchedHighscore;
+    }
+    async function fetchData() {
+        try {
+            const response = await fetch("data.json");
+            const responseObj = await response.json();
+            return responseObj;
+        }
+        catch (error) {
+            return error;
+        }
+    }
+    function saveData() {
+        if (gameState.score > gameState.hScore) {
+            gameState.hScore = gameState.score;
+            localStorage.setItem("HighScore", JSON.stringify(gameState.score));
+        }
     }
     // Imported the following two functions from index.html
     function init(_event) {

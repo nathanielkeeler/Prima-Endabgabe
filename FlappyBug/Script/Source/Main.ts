@@ -5,7 +5,7 @@ namespace FlappyBug {
 	let root: ƒ.Node;
 	let sky: ƒ.Node;
 	let ground: ƒ.Node;
-	
+
 	let player: Player;
 
 	let enemies: ƒ.Node;
@@ -16,7 +16,8 @@ namespace FlappyBug {
 	let heart: Heart;
 
 	let gameState: GameState;
-	let speed: number = 1;
+	let speed: number;
+	let startSpeed: number = 1;
 
 	// let soundtrack: ƒ.ComponentAudio;
 
@@ -28,11 +29,6 @@ namespace FlappyBug {
 	function start(_event: CustomEvent): void {
 		initViewport(_event);
 
-		ƒ.Time.game.set(0);
-		gameState = new GameState();
-		gameState.gameRunning = true;
-		gameState.score = 0;
-
 		initGame();
 
 		ƒ.AudioManager.default.listenTo(root);
@@ -43,11 +39,11 @@ namespace FlappyBug {
 	function update(_event: Event): void {
 		ƒ.Physics.simulate();
 
-		if(gameState.gameRunning == true) {
+		if (gameState.gameRunning == true) {
 			animateBackground();
 			gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
 		}
-		if(ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && speed < 3) {
+		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && startSpeed < 3) {
 			document.dispatchEvent(new Event("increaseGameSpeed"));
 		}
 		document.addEventListener("increaseGameSpeed", increaseGameSpeed);
@@ -63,7 +59,7 @@ namespace FlappyBug {
 		ground = root.getChildrenByName("Ground")[0];
 		player = new Player();
 		root.appendChild(player);
-		
+
 		collectibles = root.getChildrenByName("Collectibles")[0];
 		coin = new Coin();
 		collectibles.appendChild(coin);
@@ -73,6 +69,12 @@ namespace FlappyBug {
 		enemies = root.getChildrenByName("Enemies")[0];
 		enemy = new Enemy();
 		enemies.appendChild(enemy);
+
+		ƒ.Time.game.set(0);
+		gameState = new GameState();
+		gameState.gameRunning = true;
+		gameState.score = 0;
+		speed = startSpeed;
 
 		// initAudio();
 		initEnemyAnimation();
@@ -133,8 +135,36 @@ namespace FlappyBug {
 		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * speed);
 	}
 
-	function increaseGameSpeed():void {
+	function increaseGameSpeed(): void {
 		console.log(speed += 0.025);
+	}
+
+	async function getData() {
+		let data = await fetchData();
+
+		let fetchedHighscore: number = data.data.startHighscore;
+		startSpeed = data.data.startSpeed;
+
+		gameState.hScore = <number><unknown>localStorage.getItem("HighScore")
+		if (fetchedHighscore > gameState.hScore)
+			gameState.hScore = fetchedHighscore;
+	}
+
+	async function fetchData() {
+		try {
+			const response = await fetch("data.json");
+			const responseObj = await response.json();
+			return responseObj;
+		} catch (error) {
+			return error;
+		}
+	}
+
+	function saveData() {
+		if (gameState.score > gameState.hScore) {
+			gameState.hScore = gameState.score;
+			localStorage.setItem("HighScore", JSON.stringify(gameState.score));
+		}
 	}
 
 
