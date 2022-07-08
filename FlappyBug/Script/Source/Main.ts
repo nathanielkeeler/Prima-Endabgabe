@@ -21,6 +21,8 @@ namespace FlappyBug {
 
 	function start(_event: CustomEvent): void {
 		initViewport(_event);
+
+		ƒ.Time.game.set(0);
 		gameState = new GameState();
 		gameState.gameRunning = true;
 		gameState.score = 0;
@@ -64,7 +66,7 @@ namespace FlappyBug {
 		// initAudio();
 		initEnemyAnimation();
 
-		let canvas: HTMLCanvasElement = viewport.getCanvas();
+		// let canvas: HTMLCanvasElement = viewport.getCanvas();
 		// canvas.requestPointerLock();
 	}
 

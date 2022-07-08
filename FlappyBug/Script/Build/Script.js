@@ -168,6 +168,7 @@ var FlappyBug;
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         initViewport(_event);
+        ƒ.Time.game.set(0);
         gameState = new FlappyBug.GameState();
         gameState.gameRunning = true;
         gameState.score = 0;
@@ -200,7 +201,7 @@ var FlappyBug;
         gameState.score = 0;
         // initAudio();
         initEnemyAnimation();
-        let canvas = viewport.getCanvas();
+        // let canvas: HTMLCanvasElement = viewport.getCanvas();
         // canvas.requestPointerLock();
     }
     // function initAudio(): void {
