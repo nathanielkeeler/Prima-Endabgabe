@@ -5,13 +5,19 @@ namespace FlappyBug {
 	let root: ƒ.Node;
 	let sky: ƒ.Node;
 	let ground: ƒ.Node;
+	
 	let player: Player;
+
+	let enemies: ƒ.Node;
 	let enemy: ƒ.Node;
+
 	let collectibles: ƒ.Node;
 	let coin: Coin;
 	let heart: Heart;
+
 	let gameState: GameState;
 	let speed: number = 1;
+
 	// let soundtrack: ƒ.ComponentAudio;
 
 	let dialog: HTMLDialogElement;
@@ -60,8 +66,9 @@ namespace FlappyBug {
 		heart = new Heart();
 		collectibles.appendChild(heart);
 
-		enemy = root.getChildrenByName("Enemies")[0].getChildrenByName("Enemy")[0];
-		gameState.score = 0;
+		enemies = root.getChildrenByName("Enemies")[0];
+		enemy = new Enemy();
+		enemies.appendChild(enemy);
 
 		// initAudio();
 		initEnemyAnimation();
@@ -118,8 +125,8 @@ namespace FlappyBug {
 
 	function animateBackground(): void {
 		let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.1 * deltaTime * speed);
-		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.5 * deltaTime * speed);
+		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * speed);
+		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * speed);
 	}
 
 

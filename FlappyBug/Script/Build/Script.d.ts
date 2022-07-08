@@ -18,6 +18,16 @@ declare namespace Script {
     }
 }
 declare namespace FlappyBug {
+    import ƒ = FudgeCore;
+    class Enemy extends ƒ.Node {
+        private spriteNodeFly;
+        constructor();
+        private initEnemy;
+        private initEnemyBodyandPosition;
+        private initFlyingSprites;
+    }
+}
+declare namespace FlappyBug {
     class GameState extends ƒ.Mutable {
         private static instance;
         gameRunning: boolean;

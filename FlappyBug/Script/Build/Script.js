@@ -84,6 +84,55 @@ var Script;
 })(Script || (Script = {}));
 var FlappyBug;
 (function (FlappyBug) {
+    var ƒ = FudgeCore;
+    var ƒAid = FudgeAid;
+    class Enemy extends ƒ.Node {
+        spriteNodeFly;
+        // private rigidbody: ƒ.ComponentRigidbody;
+        constructor() {
+            super("Enemy");
+            this.initEnemy();
+        }
+        async initEnemy() {
+            await this.initEnemyBodyandPosition();
+            await this.initFlyingSprites();
+        }
+        async initEnemyBodyandPosition() {
+            this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("EnemyMesh")));
+            this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("EnemyMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
+            this.addComponent(new ƒ.ComponentTransform());
+            this.mtxLocal.translation = new ƒ.Vector3(1, 0, 0);
+            this.mtxLocal.scaling = new ƒ.Vector3(0.19, 0.19, 0.19);
+            // this.rigidbody = new ƒ.ComponentRigidbody();
+            // this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
+            // this.rigidbody.mass = 1;
+            // this.rigidbody.dampTranslation = 1;
+            // this.rigidbody.effectGravity = 0.115;
+            // this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            // this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
+            // this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
+            // this.addComponent(this.rigidbody);
+        }
+        async initFlyingSprites() {
+            let imgSpriteSheet = new ƒ.TextureImage();
+            await imgSpriteSheet.load("Assets/images/sprites/enemy.png");
+            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("EnemyFlyingSpriteAnimation", coat);
+            animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 598, 402), 4, 340, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(598));
+            this.spriteNodeFly = new ƒAid.NodeSprite("SpriteFly");
+            this.spriteNodeFly.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
+            this.spriteNodeFly.setAnimation(animation);
+            this.spriteNodeFly.setFrameDirection(1);
+            this.spriteNodeFly.mtxLocal.translateY(-0.5);
+            this.spriteNodeFly.framerate = 10;
+            this.addChild(this.spriteNodeFly);
+            this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
+        }
+    }
+    FlappyBug.Enemy = Enemy;
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
     var ƒui = FudgeUserInterface;
     class GameState extends ƒ.Mutable {
         static instance;
@@ -156,6 +205,7 @@ var FlappyBug;
     let sky;
     let ground;
     let player;
+    let enemies;
     let enemy;
     let collectibles;
     let coin;
@@ -197,8 +247,9 @@ var FlappyBug;
         collectibles.appendChild(coin);
         heart = new FlappyBug.Heart();
         collectibles.appendChild(heart);
-        enemy = root.getChildrenByName("Enemies")[0].getChildrenByName("Enemy")[0];
-        gameState.score = 0;
+        enemies = root.getChildrenByName("Enemies")[0];
+        enemy = new FlappyBug.Enemy();
+        enemies.appendChild(enemy);
         // initAudio();
         initEnemyAnimation();
         // let canvas: HTMLCanvasElement = viewport.getCanvas();
@@ -246,8 +297,8 @@ var FlappyBug;
     }
     function animateBackground() {
         let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.1 * deltaTime * speed);
-        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.5 * deltaTime * speed);
+        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * speed);
+        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * speed);
     }
     // Imported the following two functions from index.html
     function init(_event) {
