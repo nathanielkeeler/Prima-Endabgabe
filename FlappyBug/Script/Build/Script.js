@@ -138,11 +138,17 @@ var FlappyBug;
         static instance;
         gameRunning;
         score;
+        hScore;
+        health1 = true;
+        health2 = true;
+        health3 = true;
         constructor() {
             super();
             GameState.instance = this;
             let hud = document.querySelector("#HUD");
             console.log(new ƒui.Controller(this, hud));
+        }
+        setHealth() {
         }
         static get() {
             return GameState.instance || new GameState();
@@ -374,7 +380,7 @@ var FlappyBug;
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
             this.rigidbody.mass = 1;
             this.rigidbody.dampTranslation = 1;
-            this.rigidbody.effectGravity = 0.115;
+            this.rigidbody.effectGravity = 0.12;
             this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
             this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
             this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;

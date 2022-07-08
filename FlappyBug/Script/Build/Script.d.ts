@@ -32,7 +32,12 @@ declare namespace FlappyBug {
         private static instance;
         gameRunning: boolean;
         score: number;
+        hScore: number;
+        health1: boolean;
+        health2: boolean;
+        health3: boolean;
         constructor();
+        setHealth(): void;
         static get(): GameState;
         protected reduceMutator(_mutator: ƒ.Mutator): void;
     }
