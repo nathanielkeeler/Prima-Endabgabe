@@ -2,6 +2,7 @@ namespace FlappyBug {
 	import ƒ = FudgeCore;
 
 	let viewport: ƒ.Viewport;
+	let canvas: HTMLCanvasElement;
 	let hud: HTMLElement;
 	let root: ƒ.Node;
 	let sky: ƒ.Node;
@@ -29,6 +30,9 @@ namespace FlappyBug {
 
 	function start(_event: CustomEvent): void {
 		initViewport(_event);
+		window.addEventListener("resize", () => {
+			canvas.width = window.innerWidth;
+		});
 
 		initGame();
 
@@ -81,8 +85,7 @@ namespace FlappyBug {
 		// initAudio();
 		initEnemyAnimation();
 
-		// let canvas: HTMLCanvasElement = viewport.getCanvas();
-		// canvas.requestPointerLock();
+		canvas.requestPointerLock();
 	}
 
 	// function initAudio(): void {
@@ -195,7 +198,7 @@ namespace FlappyBug {
 			return;
 		}
 		let cmpCamera: ƒ.ComponentCamera = new ƒ.ComponentCamera();
-		let canvas: HTMLCanvasElement = document.querySelector("canvas");
+		canvas = document.querySelector("canvas");
 		let viewport: ƒ.Viewport = new ƒ.Viewport();
 		viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
 		viewport.draw();

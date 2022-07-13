@@ -22,6 +22,7 @@ declare namespace FlappyBug {
     class Enemy extends ƒ.Node {
         private spriteNodeFly;
         private enemySpeed;
+        private rigidbody;
         constructor();
         private updateEnemy;
         private initEnemy;

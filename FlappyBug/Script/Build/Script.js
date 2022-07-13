@@ -88,8 +88,8 @@ var FlappyBug;
     var ƒAid = FudgeAid;
     class Enemy extends ƒ.Node {
         spriteNodeFly;
-        enemySpeed = 7;
-        // private rigidbody: ƒ.ComponentRigidbody;
+        enemySpeed = 1;
+        rigidbody;
         constructor() {
             super("Enemy");
             this.initEnemy();
@@ -109,15 +109,15 @@ var FlappyBug;
             this.addComponent(new ƒ.ComponentTransform());
             this.mtxLocal.translation = new ƒ.Vector3(2.2, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.19, 0.19, 0.19);
-            // this.rigidbody = new ƒ.ComponentRigidbody();
-            // this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
-            // this.rigidbody.mass = 1;
-            // this.rigidbody.dampTranslation = 1;
-            // this.rigidbody.effectGravity = 0.115;
-            // this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
-            // this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
-            // this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
-            // this.addComponent(this.rigidbody);
+            this.rigidbody = new ƒ.ComponentRigidbody();
+            this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
+            this.rigidbody.mass = 1;
+            this.rigidbody.dampTranslation = 1;
+            this.rigidbody.effectGravity = 0;
+            this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
+            this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
+            this.addComponent(this.rigidbody);
         }
         async initFlyingSprites() {
             let imgSpriteSheet = new ƒ.TextureImage();
@@ -137,13 +137,19 @@ var FlappyBug;
         // Moves Enemy from right to left across the screen. Becomes faster when gameSpeed is increased
         moveEnemy() {
             let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-            this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * FlappyBug.gameSpeed);
+            // this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * gameSpeed);
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * FlappyBug.gameSpeed, 0, 0));
+            // this.rigidbody.translateBody(new ƒ.Vector3(Math.sin(deltaTime * this.rigidbody.getPosition().x), 0, 0));
         }
         // Repositions the Enemy once it passes visible boundaries
         repositionEnemy() {
-            if (this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2, -20, 2))
-                this.cmpTransform.mtxLocal.translation.x = 2.2;
+            // if(this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2,-20,2))
+            //     this.cmpTransform.mtxLocal.translation.x = 2.2;
+            // if(this.rigidbody.mtxPivot.translation.x <= this.getRandomFloat(-2.2,-20,2))
+            //     this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
         }
+        // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
+        // Höhe Gegner * Random(Anzahl an Steps)
         getRandomFloat(min, max, decimals) {
             let str = (Math.random() * (max - min) + min).toFixed(decimals);
             return parseFloat(str);
@@ -227,6 +233,7 @@ var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
     let viewport;
+    let canvas;
     let hud;
     let root;
     let sky;
@@ -245,6 +252,9 @@ var FlappyBug;
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         initViewport(_event);
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+        });
         initGame();
         ƒ.AudioManager.default.listenTo(root);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
@@ -285,8 +295,7 @@ var FlappyBug;
         FlappyBug.gameSpeed = startSpeed;
         // initAudio();
         initEnemyAnimation();
-        // let canvas: HTMLCanvasElement = viewport.getCanvas();
-        // canvas.requestPointerLock();
+        canvas.requestPointerLock();
     }
     // function initAudio(): void {
     // 	ƒ.AudioManager.default.listenTo(root);
@@ -383,7 +392,7 @@ var FlappyBug;
             return;
         }
         let cmpCamera = new ƒ.ComponentCamera();
-        let canvas = document.querySelector("canvas");
+        canvas = document.querySelector("canvas");
         let viewport = new ƒ.Viewport();
         viewport.initialize("InteractiveViewport", graph, cmpCamera, canvas);
         viewport.draw();
@@ -406,8 +415,7 @@ var FlappyBug;
         framerateHigh = 40;
         constructor() {
             super("Player");
-            this.initPlayer();
-            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updatePlayer);
+            this.initPlayer().then(() => ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updatePlayer));
         }
         async initPlayer() {
             await this.initPlayerBodyandPosition();

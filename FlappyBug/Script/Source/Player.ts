@@ -16,11 +16,8 @@ namespace FlappyBug {
 
 		constructor() {
 			super("Player");
-			this.initPlayer();
-
-			ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.updatePlayer);
+			this.initPlayer().then(() => ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.updatePlayer));
 		}
-
 
 		private async initPlayer(): Promise<void> {
 			await this.initPlayerBodyandPosition();

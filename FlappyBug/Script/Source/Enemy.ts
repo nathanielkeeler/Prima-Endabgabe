@@ -5,8 +5,8 @@ namespace FlappyBug {
     export class Enemy extends ƒ.Node {
 
         private spriteNodeFly: ƒAid.NodeSprite;
-        private enemySpeed: number = 7;
-        // private rigidbody: ƒ.ComponentRigidbody;
+        private enemySpeed: number = 1;
+        private rigidbody: ƒ.ComponentRigidbody;
 
         constructor() {
             super("Enemy");
@@ -33,15 +33,15 @@ namespace FlappyBug {
             this.mtxLocal.translation = new ƒ.Vector3(2.2, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.19, 0.19, 0.19);
 
-            // this.rigidbody = new ƒ.ComponentRigidbody();
-            // this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
-            // this.rigidbody.mass = 1;
-            // this.rigidbody.dampTranslation = 1;
-            // this.rigidbody.effectGravity = 0.115;
-            // this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
-            // this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
-            // this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
-            // this.addComponent(this.rigidbody);
+            this.rigidbody = new ƒ.ComponentRigidbody();
+            this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
+            this.rigidbody.mass = 1;
+            this.rigidbody.dampTranslation = 1;
+            this.rigidbody.effectGravity = 0;
+            this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
+            this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
+            this.addComponent(this.rigidbody);
         }
 
         private async initFlyingSprites(): Promise<void> {
@@ -66,14 +66,21 @@ namespace FlappyBug {
         // Moves Enemy from right to left across the screen. Becomes faster when gameSpeed is increased
         private moveEnemy(): void {
             let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-            this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * gameSpeed);
+            // this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * gameSpeed);
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0, 0));
+            // this.rigidbody.translateBody(new ƒ.Vector3(Math.sin(deltaTime * this.rigidbody.getPosition().x), 0, 0));
         }
 
         // Repositions the Enemy once it passes visible boundaries
         private repositionEnemy(): void {
-            if(this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2,-20,2))
-                this.cmpTransform.mtxLocal.translation.x = 2.2;
+            // if(this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2,-20,2))
+            //     this.cmpTransform.mtxLocal.translation.x = 2.2;
+            // if(this.rigidbody.mtxPivot.translation.x <= this.getRandomFloat(-2.2,-20,2))
+            //     this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
         }
+
+        // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
+        // Höhe Gegner * Random(Anzahl an Steps)
 
         private getRandomFloat(min: number, max: number, decimals: number): number {
             let str = (Math.random() * (max - min) + min).toFixed(decimals);
