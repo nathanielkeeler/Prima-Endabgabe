@@ -5,11 +5,19 @@ namespace FlappyBug {
     export class Enemy extends ƒ.Node {
 
         private spriteNodeFly: ƒAid.NodeSprite;
+        private enemySpeed: number = 5;
         // private rigidbody: ƒ.ComponentRigidbody;
 
         constructor() {
             super("Enemy");
             this.initEnemy();
+
+            ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.updateEnemy);
+        }
+
+        private updateEnemy = (_event: Event) => {
+            this.moveEnemy();
+            this.repositionEnemy();
         }
 
 
@@ -22,7 +30,7 @@ namespace FlappyBug {
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("EnemyMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("EnemyMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
-            this.mtxLocal.translation = new ƒ.Vector3(1, 0, 0);
+            this.mtxLocal.translation = new ƒ.Vector3(2.2, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.19, 0.19, 0.19);
 
             // this.rigidbody = new ƒ.ComponentRigidbody();
@@ -54,5 +62,22 @@ namespace FlappyBug {
             this.addChild(this.spriteNodeFly);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0,0,0,0);
         }
+
+        // Moves Enemy from right to left across the screen. Becomes faster when gameSpeed is increased
+        private moveEnemy(): void {
+            let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
+            this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * gameSpeed);
+        }
+
+        // Repositions the Enemy once it passes visible boundaries
+        private repositionEnemy(): void {
+            if(this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2,-20,2))
+                this.cmpTransform.mtxLocal.translation.x = 2.2;
+        }
+
+        private getRandomFloat(min: number, max: number, decimals: number): number {
+            let str = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(str);
+          }
     }
 }

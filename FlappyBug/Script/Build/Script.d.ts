@@ -21,10 +21,15 @@ declare namespace FlappyBug {
     import ƒ = FudgeCore;
     class Enemy extends ƒ.Node {
         private spriteNodeFly;
+        private enemySpeed;
         constructor();
+        private updateEnemy;
         private initEnemy;
         private initEnemyBodyandPosition;
         private initFlyingSprites;
+        private moveEnemy;
+        private repositionEnemy;
+        private getRandomFloat;
     }
 }
 declare namespace FlappyBug {
@@ -53,6 +58,7 @@ declare namespace FlappyBug {
     }
 }
 declare namespace FlappyBug {
+    let gameSpeed: number;
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;

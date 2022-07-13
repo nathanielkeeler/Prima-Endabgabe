@@ -17,7 +17,7 @@ namespace FlappyBug {
 	let heart: Heart;
 
 	let gameState: GameState;
-	let speed: number;
+	export let gameSpeed: number;
 	let startSpeed: number = 1;
 
 	// let soundtrack: ƒ.ComponentAudio;
@@ -76,7 +76,7 @@ namespace FlappyBug {
 		gameState = new GameState();
 		gameState.gameRunning = true;
 		gameState.score = 0;
-		speed = startSpeed;
+		gameSpeed = startSpeed;
 
 		// initAudio();
 		initEnemyAnimation();
@@ -133,41 +133,41 @@ namespace FlappyBug {
 
 	function animateBackground(): void {
 		let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * speed);
-		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * speed);
+		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * gameSpeed);
+		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * gameSpeed);
 	}
 
 	function increaseGameSpeed(): void {
-		console.log(speed += 0.015);
+		console.log(gameSpeed += 0.015);
 	}
 
-	async function getData() {
-		let data = await fetchData();
+	// async function getData() {
+	// 	let data = await fetchData();
 
-		let fetchedHighscore: number = data.data.startHighscore;
-		startSpeed = data.data.startSpeed;
+	// 	let fetchedHighscore: number = data.data.startHighscore;
+	// 	startSpeed = data.data.startSpeed;
 
-		gameState.hScore = <number><unknown>localStorage.getItem("HighScore")
-		if (fetchedHighscore > gameState.hScore)
-			gameState.hScore = fetchedHighscore;
-	}
+	// 	gameState.hScore = <number><unknown>localStorage.getItem("HighScore")
+	// 	if (fetchedHighscore > gameState.hScore)
+	// 		gameState.hScore = fetchedHighscore;
+	// }
 
-	async function fetchData() {
-		try {
-			const response = await fetch("data.json");
-			const responseObj = await response.json();
-			return responseObj;
-		} catch (error) {
-			return error;
-		}
-	}
+	// async function fetchData() {
+	// 	try {
+	// 		const response = await fetch("data.json");
+	// 		const responseObj = await response.json();
+	// 		return responseObj;
+	// 	} catch (error) {
+	// 		return error;
+	// 	}
+	// }
 
-	function saveData() {
-		if (gameState.score > gameState.hScore) {
-			gameState.hScore = gameState.score;
-			localStorage.setItem("HighScore", JSON.stringify(gameState.score));
-		}
-	}
+	// function saveData() {
+	// 	if (gameState.score > gameState.hScore) {
+	// 		gameState.hScore = gameState.score;
+	// 		localStorage.setItem("HighScore", JSON.stringify(gameState.score));
+	// 	}
+	// }
 
 
 

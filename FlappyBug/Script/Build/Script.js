@@ -88,11 +88,17 @@ var FlappyBug;
     var ƒAid = FudgeAid;
     class Enemy extends ƒ.Node {
         spriteNodeFly;
+        enemySpeed = 5;
         // private rigidbody: ƒ.ComponentRigidbody;
         constructor() {
             super("Enemy");
             this.initEnemy();
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updateEnemy);
         }
+        updateEnemy = (_event) => {
+            this.moveEnemy();
+            this.repositionEnemy();
+        };
         async initEnemy() {
             await this.initEnemyBodyandPosition();
             await this.initFlyingSprites();
@@ -101,7 +107,7 @@ var FlappyBug;
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("EnemyMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("EnemyMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
-            this.mtxLocal.translation = new ƒ.Vector3(1, 0, 0);
+            this.mtxLocal.translation = new ƒ.Vector3(2.2, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.19, 0.19, 0.19);
             // this.rigidbody = new ƒ.ComponentRigidbody();
             // this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
@@ -127,6 +133,20 @@ var FlappyBug;
             this.spriteNodeFly.framerate = 10;
             this.addChild(this.spriteNodeFly);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
+        }
+        // Moves Enemy from right to left across the screen. Becomes faster when gameSpeed is increased
+        moveEnemy() {
+            let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+            this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * FlappyBug.gameSpeed);
+        }
+        // Repositions the Enemy once it passes visible boundaries
+        repositionEnemy() {
+            if (this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2, -20, 2))
+                this.cmpTransform.mtxLocal.translation.x = 2.2;
+        }
+        getRandomFloat(min, max, decimals) {
+            let str = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(str);
         }
     }
     FlappyBug.Enemy = Enemy;
@@ -218,7 +238,6 @@ var FlappyBug;
     let coin;
     let heart;
     let gameState;
-    let speed;
     let startSpeed = 1;
     // let soundtrack: ƒ.ComponentAudio;
     let dialog;
@@ -263,7 +282,7 @@ var FlappyBug;
         gameState = new FlappyBug.GameState();
         gameState.gameRunning = true;
         gameState.score = 0;
-        speed = startSpeed;
+        FlappyBug.gameSpeed = startSpeed;
         // initAudio();
         initEnemyAnimation();
         // let canvas: HTMLCanvasElement = viewport.getCanvas();
@@ -311,36 +330,35 @@ var FlappyBug;
     }
     function animateBackground() {
         let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * speed);
-        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * speed);
+        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * FlappyBug.gameSpeed);
+        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * FlappyBug.gameSpeed);
     }
     function increaseGameSpeed() {
-        console.log(speed += 0.015);
+        console.log(FlappyBug.gameSpeed += 0.015);
     }
-    async function getData() {
-        let data = await fetchData();
-        let fetchedHighscore = data.data.startHighscore;
-        startSpeed = data.data.startSpeed;
-        gameState.hScore = localStorage.getItem("HighScore");
-        if (fetchedHighscore > gameState.hScore)
-            gameState.hScore = fetchedHighscore;
-    }
-    async function fetchData() {
-        try {
-            const response = await fetch("data.json");
-            const responseObj = await response.json();
-            return responseObj;
-        }
-        catch (error) {
-            return error;
-        }
-    }
-    function saveData() {
-        if (gameState.score > gameState.hScore) {
-            gameState.hScore = gameState.score;
-            localStorage.setItem("HighScore", JSON.stringify(gameState.score));
-        }
-    }
+    // async function getData() {
+    // 	let data = await fetchData();
+    // 	let fetchedHighscore: number = data.data.startHighscore;
+    // 	startSpeed = data.data.startSpeed;
+    // 	gameState.hScore = <number><unknown>localStorage.getItem("HighScore")
+    // 	if (fetchedHighscore > gameState.hScore)
+    // 		gameState.hScore = fetchedHighscore;
+    // }
+    // async function fetchData() {
+    // 	try {
+    // 		const response = await fetch("data.json");
+    // 		const responseObj = await response.json();
+    // 		return responseObj;
+    // 	} catch (error) {
+    // 		return error;
+    // 	}
+    // }
+    // function saveData() {
+    // 	if (gameState.score > gameState.hScore) {
+    // 		gameState.hScore = gameState.score;
+    // 		localStorage.setItem("HighScore", JSON.stringify(gameState.score));
+    // 	}
+    // }
     // Imported the following two functions from index.html
     function init(_event) {
         hud = document.getElementById("HUD");
