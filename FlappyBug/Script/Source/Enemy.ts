@@ -5,7 +5,7 @@ namespace FlappyBug {
     export class Enemy extends ƒ.Node {
 
         private spriteNodeFly: ƒAid.NodeSprite;
-        private enemySpeed: number = 5;
+        private enemySpeed: number = 7;
         // private rigidbody: ƒ.ComponentRigidbody;
 
         constructor() {

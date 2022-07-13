@@ -44,7 +44,7 @@ namespace FlappyBug {
 			animateBackground();
 			gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
 		}
-		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && startSpeed < 3) {
+		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && gameSpeed < 3) {
 			document.dispatchEvent(new Event("increaseGameSpeed"));
 		}
 		document.addEventListener("increaseGameSpeed", increaseGameSpeed);
@@ -138,7 +138,7 @@ namespace FlappyBug {
 	}
 
 	function increaseGameSpeed(): void {
-		console.log(gameSpeed += 0.015);
+		gameSpeed += 0.015;
 	}
 
 	// async function getData() {

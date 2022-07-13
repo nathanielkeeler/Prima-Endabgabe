@@ -88,7 +88,7 @@ var FlappyBug;
     var ƒAid = FudgeAid;
     class Enemy extends ƒ.Node {
         spriteNodeFly;
-        enemySpeed = 5;
+        enemySpeed = 7;
         // private rigidbody: ƒ.ComponentRigidbody;
         constructor() {
             super("Enemy");
@@ -256,7 +256,7 @@ var FlappyBug;
             animateBackground();
             gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
         }
-        if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && startSpeed < 3) {
+        if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && FlappyBug.gameSpeed < 3) {
             document.dispatchEvent(new Event("increaseGameSpeed"));
         }
         document.addEventListener("increaseGameSpeed", increaseGameSpeed);
@@ -334,7 +334,7 @@ var FlappyBug;
         ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * FlappyBug.gameSpeed);
     }
     function increaseGameSpeed() {
-        console.log(FlappyBug.gameSpeed += 0.015);
+        FlappyBug.gameSpeed += 0.015;
     }
     // async function getData() {
     // 	let data = await fetchData();
