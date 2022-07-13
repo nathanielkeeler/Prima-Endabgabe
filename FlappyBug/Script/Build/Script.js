@@ -315,7 +315,7 @@ var FlappyBug;
         ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * speed);
     }
     function increaseGameSpeed() {
-        console.log(speed += 0.025);
+        console.log(speed += 0.015);
     }
     async function getData() {
         let data = await fetchData();
@@ -410,7 +410,7 @@ var FlappyBug;
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
             this.rigidbody.mass = 1;
             this.rigidbody.dampTranslation = 1;
-            this.rigidbody.effectGravity = 0.12;
+            this.rigidbody.effectGravity = 0.15;
             this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
             this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
             this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
@@ -421,7 +421,7 @@ var FlappyBug;
             this.spriteNodeFly.framerate = this.framerateLow;
             this.removeComponent(this.cmpAudioFlying);
             if (vertical) {
-                this.rigidbody.applyForce(new ƒ.Vector3(0, 3, 0));
+                this.rigidbody.applyForce(new ƒ.Vector3(0, 3.5, 0));
                 this.spriteNodeFly.framerate = this.framerateHigh;
                 this.addComponent(this.cmpAudioFlying);
             }

@@ -138,7 +138,7 @@ namespace FlappyBug {
 	}
 
 	function increaseGameSpeed(): void {
-		console.log(speed += 0.025);
+		console.log(speed += 0.015);
 	}
 
 	async function getData() {
