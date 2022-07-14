@@ -88,7 +88,7 @@ var FlappyBug;
     var ƒAid = FudgeAid;
     class Enemy extends ƒ.Node {
         spriteNodeFly;
-        enemySpeed = 1;
+        // private enemySpeed: number = 1;
         rigidbody;
         constructor() {
             super("Enemy");
@@ -96,8 +96,8 @@ var FlappyBug;
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updateEnemy);
         }
         updateEnemy = (_event) => {
-            this.moveEnemy();
-            this.repositionEnemy();
+            // this.moveEnemy();
+            // this.repositionEnemy();
         };
         async initEnemy() {
             await this.initEnemyBodyandPosition();
@@ -133,26 +133,6 @@ var FlappyBug;
             this.spriteNodeFly.framerate = 10;
             this.addChild(this.spriteNodeFly);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
-        }
-        // Moves Enemy from right to left across the screen. Becomes faster when gameSpeed is increased
-        moveEnemy() {
-            let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-            // this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * gameSpeed);
-            // this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0, 0));
-            this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * FlappyBug.gameSpeed, 0.002 * Math.sin(2 * this.rigidbody.getPosition().x), 0));
-        }
-        // Repositions the Enemy once it passes visible boundaries
-        repositionEnemy() {
-            // if(this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2,-20,2))
-            //     this.cmpTransform.mtxLocal.translation.x = 2.2;
-            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2))
-                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
-        }
-        // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
-        // Höhe Gegner * Random(Anzahl an Steps)
-        getRandomFloat(min, max, decimals) {
-            let str = (Math.random() * (max - min) + min).toFixed(decimals);
-            return parseFloat(str);
         }
     }
     FlappyBug.Enemy = Enemy;
@@ -287,6 +267,7 @@ var FlappyBug;
         enemies = root.getChildrenByName("Enemies")[0];
         enemy = new FlappyBug.Enemy();
         enemies.appendChild(enemy);
+        enemy.addComponent(new FlappyBug.MovementScript);
         ƒ.Time.game.set(0);
         hud.style.visibility = "visible";
         gameState = new FlappyBug.GameState();
@@ -303,6 +284,8 @@ var FlappyBug;
     // 	soundtrack.play(true);
     // 	soundtrack.volume = 0.8;
     // }
+    // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
+    // Höhe Gegner * Random(Anzahl an Steps)
     function initEnemyAnimation() {
         let animseq = new ƒ.AnimationSequence();
         animseq.addKey(new ƒ.AnimationKey(0, 0));
@@ -402,6 +385,34 @@ var FlappyBug;
 var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
+    ƒ.Project.registerScriptNamespace(FlappyBug); // Register the namespace to FUDGE for serialization
+    class MovementScript extends ƒ.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = ƒ.Component.registerSubclass(MovementScript);
+        // Properties may be mutated by users in the editor via the automatically created user interface
+        message = "MovementScript added to " + this.node;
+        rigidbody;
+        speed = 1;
+        constructor() {
+            super();
+            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+                return;
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.addComponent);
+        }
+        addComponent = () => {
+            this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.straightMovement);
+        };
+        straightMovement = () => {
+            let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0, 0));
+        };
+    }
+    FlappyBug.MovementScript = MovementScript;
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
+    var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     class Player extends ƒ.Node {
         spriteNodeFly;
@@ -493,5 +504,42 @@ var FlappyBug;
         }
     }
     FlappyBug.Player = Player;
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
+    var ƒ = FudgeCore;
+    ƒ.Project.registerScriptNamespace(FlappyBug); // Register the namespace to FUDGE for serialization
+    class SineMovementScript extends ƒ.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = ƒ.Component.registerSubclass(SineMovementScript);
+        // Properties may be mutated by users in the editor via the automatically created user interface
+        message = "SineMovementScript added to " + this.node;
+        rigidbody;
+        speed = 1;
+        constructor() {
+            super();
+            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+                return;
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.addComponent);
+        }
+        addComponent = () => {
+            this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.sineMovement);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.reposition);
+        };
+        sineMovement = () => {
+            let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0.002 * Math.sin(2 * this.rigidbody.getPosition().x), 0));
+        };
+        reposition = () => {
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2))
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
+        };
+        getRandomFloat(min, max, decimals) {
+            let str = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(str);
+        }
+    }
+    FlappyBug.SineMovementScript = SineMovementScript;
 })(FlappyBug || (FlappyBug = {}));
 //# sourceMappingURL=Script.js.map

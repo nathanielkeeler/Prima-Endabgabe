@@ -21,16 +21,12 @@ declare namespace FlappyBug {
     import ƒ = FudgeCore;
     class Enemy extends ƒ.Node {
         private spriteNodeFly;
-        private enemySpeed;
         private rigidbody;
         constructor();
         private updateEnemy;
         private initEnemy;
         private initEnemyBodyandPosition;
         private initFlyingSprites;
-        private moveEnemy;
-        private repositionEnemy;
-        private getRandomFloat;
     }
 }
 declare namespace FlappyBug {
@@ -63,6 +59,18 @@ declare namespace FlappyBug {
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
+    class MovementScript extends ƒ.ComponentScript {
+        static readonly iSubclass: number;
+        message: string;
+        private rigidbody;
+        private speed;
+        constructor();
+        addComponent: () => void;
+        straightMovement: () => void;
+    }
+}
+declare namespace FlappyBug {
+    import ƒ = FudgeCore;
     class Player extends ƒ.Node {
         private spriteNodeFly;
         private spriteNodeCrash;
@@ -81,5 +89,19 @@ declare namespace FlappyBug {
         private initFlyingSprites;
         private initCrashSprites;
         private initAudio;
+    }
+}
+declare namespace FlappyBug {
+    import ƒ = FudgeCore;
+    class SineMovementScript extends ƒ.ComponentScript {
+        static readonly iSubclass: number;
+        message: string;
+        private rigidbody;
+        private speed;
+        constructor();
+        addComponent: () => void;
+        private sineMovement;
+        private reposition;
+        private getRandomFloat;
     }
 }

@@ -74,6 +74,7 @@ namespace FlappyBug {
 		enemies = root.getChildrenByName("Enemies")[0];
 		enemy = new Enemy();
 		enemies.appendChild(enemy);
+		enemy.addComponent(new MovementScript);
 
 		ƒ.Time.game.set(0);
 		hud.style.visibility = "visible";
@@ -94,6 +95,9 @@ namespace FlappyBug {
 	// 	soundtrack.play(true);
 	// 	soundtrack.volume = 0.8;
 	// }
+
+	// Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
+	// Höhe Gegner * Random(Anzahl an Steps)
 
 	function initEnemyAnimation(): void {
 		let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();

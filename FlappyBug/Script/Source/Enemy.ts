@@ -5,7 +5,7 @@ namespace FlappyBug {
     export class Enemy extends ƒ.Node {
 
         private spriteNodeFly: ƒAid.NodeSprite;
-        private enemySpeed: number = 1;
+        // private enemySpeed: number = 1;
         private rigidbody: ƒ.ComponentRigidbody;
 
         constructor() {
@@ -16,8 +16,8 @@ namespace FlappyBug {
         }
 
         private updateEnemy = (_event: Event) => {
-            this.moveEnemy();
-            this.repositionEnemy();
+            // this.moveEnemy();
+            // this.repositionEnemy();
         }
 
 
@@ -60,31 +60,28 @@ namespace FlappyBug {
             this.spriteNodeFly.framerate = 10;
 
             this.addChild(this.spriteNodeFly);
-            this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0,0,0,0);
+            this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
         }
 
-        // Moves Enemy from right to left across the screen. Becomes faster when gameSpeed is increased
-        private moveEnemy(): void {
-            let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-            // this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * gameSpeed);
-            // this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0, 0));
-            this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0.002 * Math.sin(2 * this.rigidbody.getPosition().x), 0));
-        }
+        // // Moves Enemy from right to left across the screen. Becomes faster when gameSpeed is increased
+        // private moveEnemy(): void {
+        //     let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
+        //     // this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * gameSpeed);
+        //     // this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0, 0));
+        //     this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0.002 * Math.sin(2 * this.rigidbody.getPosition().x), 0));
+        // }
 
-        // Repositions the Enemy once it passes visible boundaries
-        private repositionEnemy(): void {
-            // if(this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2,-20,2))
-            //     this.cmpTransform.mtxLocal.translation.x = 2.2;
-            if(this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2,-20,2))
-                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
-        }
+        // // Repositions the Enemy once it passes visible boundaries
+        // private repositionEnemy(): void {
+        //     // if(this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2,-20,2))
+        //     //     this.cmpTransform.mtxLocal.translation.x = 2.2;
+        //     if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2))
+        //         this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
+        // }
 
-        // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
-        // Höhe Gegner * Random(Anzahl an Steps)
-
-        private getRandomFloat(min: number, max: number, decimals: number): number {
-            let str = (Math.random() * (max - min) + min).toFixed(decimals);
-            return parseFloat(str);
-          }
+        // private getRandomFloat(min: number, max: number, decimals: number): number {
+        //     let str = (Math.random() * (max - min) + min).toFixed(decimals);
+        //     return parseFloat(str);
+        // }
     }
 }
