@@ -85,7 +85,7 @@ namespace FlappyBug {
 		// initAudio();
 		initEnemyAnimation();
 
-		canvas.requestPointerLock();
+		// canvas.requestPointerLock();
 	}
 
 	// function initAudio(): void {

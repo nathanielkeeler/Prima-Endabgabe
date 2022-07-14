@@ -39,7 +39,7 @@ namespace FlappyBug {
             this.rigidbody.dampTranslation = 1;
             this.rigidbody.effectGravity = 0;
             this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
-            this.rigidbody.typeBody = ƒ.BODY_TYPE.DYNAMIC;
+            this.rigidbody.typeBody = ƒ.BODY_TYPE.STATIC;
             this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
             this.addComponent(this.rigidbody);
         }
@@ -67,16 +67,16 @@ namespace FlappyBug {
         private moveEnemy(): void {
             let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
             // this.cmpTransform.mtxLocal.translateX(-this.enemySpeed * deltaTime * gameSpeed);
-            this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0, 0));
-            // this.rigidbody.translateBody(new ƒ.Vector3(Math.sin(deltaTime * this.rigidbody.getPosition().x), 0, 0));
+            // this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0, 0));
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.enemySpeed * deltaTime * gameSpeed, 0.002 * Math.sin(2 * this.rigidbody.getPosition().x), 0));
         }
 
         // Repositions the Enemy once it passes visible boundaries
         private repositionEnemy(): void {
             // if(this.cmpTransform.mtxLocal.translation.x <= this.getRandomFloat(-2.2,-20,2))
             //     this.cmpTransform.mtxLocal.translation.x = 2.2;
-            // if(this.rigidbody.mtxPivot.translation.x <= this.getRandomFloat(-2.2,-20,2))
-            //     this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
+            if(this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2,-20,2))
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
         }
 
         // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
