@@ -35,12 +35,14 @@ namespace FlappyBug {
 
             this.rigidbody = new ƒ.ComponentRigidbody();
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
+            this.rigidbody.mtxPivot.scaling = new ƒ.Vector3(0.8, 0.8, 0.8);
             this.rigidbody.mass = 1;
             this.rigidbody.dampTranslation = 1;
             this.rigidbody.effectGravity = 0;
             this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
             this.rigidbody.typeBody = ƒ.BODY_TYPE.STATIC;
             this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
+            this.rigidbody.isTrigger = true;
             this.addComponent(this.rigidbody);
         }
 
@@ -60,7 +62,7 @@ namespace FlappyBug {
             this.spriteNodeFly.framerate = 10;
 
             this.addChild(this.spriteNodeFly);
-            this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
+            this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0,0,0,0);
         }
 
         // // Moves Enemy from right to left across the screen. Becomes faster when gameSpeed is increased

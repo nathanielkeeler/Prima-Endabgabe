@@ -64,6 +64,7 @@ namespace FlappyBug {
 		ground = root.getChildrenByName("Ground")[0];
 		player = new Player();
 		root.appendChild(player);
+		player.getComponent(ƒ.ComponentRigidbody).addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, hndCollision, true);
 
 		collectibles = root.getChildrenByName("Collectibles")[0];
 		coin = new Coin();
@@ -74,19 +75,34 @@ namespace FlappyBug {
 		enemies = root.getChildrenByName("Enemies")[0];
 		enemy = new Enemy();
 		enemies.appendChild(enemy);
-		enemy.addComponent(new MovementScript);
+		enemy.addComponent(new SineMovementScript);
 
 		ƒ.Time.game.set(0);
 		hud.style.visibility = "visible";
 		gameState = new GameState();
 		gameState.gameRunning = true;
 		gameState.score = 0;
+		gameState.setHealth();
 		gameSpeed = startSpeed;
 
 		// initAudio();
-		initEnemyAnimation();
+		// initEnemyAnimation();
 
 		// canvas.requestPointerLock();
+	}
+
+	function hndCollision(_event: ƒ.EventPhysics): void {
+		if (gameState.gameRunning != true)
+			return;
+
+		let obstacle: ƒ.Node = _event.cmpRigidbody.node;
+		console.log(obstacle.name);
+
+		if (obstacle.name == "Enemy") {
+			if(gameState.reduceHealth() == 0) {
+
+			}
+		}
 	}
 
 	// function initAudio(): void {
@@ -99,37 +115,37 @@ namespace FlappyBug {
 	// Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
 	// Höhe Gegner * Random(Anzahl an Steps)
 
-	function initEnemyAnimation(): void {
-		let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();
-		animseq.addKey(new ƒ.AnimationKey(0, 0));
-		animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
-		animseq.addKey(new ƒ.AnimationKey(3000, 0));
+	// function initEnemyAnimation(): void {
+	// 	let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();
+	// 	animseq.addKey(new ƒ.AnimationKey(0, 0));
+	// 	animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
+	// 	animseq.addKey(new ƒ.AnimationKey(3000, 0));
 
-		let animStructure: ƒ.AnimationStructure = {
-			components: {
-				ComponentTransform: [
-					{
-						"ƒ.ComponentTransform": {
-							mtxLocal: {
-								translation: {
-									y: animseq
-								}
-							}
-						}
-					}
-				]
-			}
-		};
+	// 	let animStructure: ƒ.AnimationStructure = {
+	// 		components: {
+	// 			ComponentTransform: [
+	// 				{
+	// 					"ƒ.ComponentTransform": {
+	// 						mtxLocal: {
+	// 							translation: {
+	// 								y: animseq
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+	// 			]
+	// 		}
+	// 	};
 
-		let animation: ƒ.Animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
-		let cmpAnimator: ƒ.ComponentAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
-		if (enemy.getComponent(ƒ.ComponentAnimator)) {
-			enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
-		}
+	// 	let animation: ƒ.Animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
+	// 	let cmpAnimator: ƒ.ComponentAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
+	// 	if (enemy.getComponent(ƒ.ComponentAnimator)) {
+	// 		enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
+	// 	}
 
-		enemy.addComponent(cmpAnimator);
-		cmpAnimator.activate(true);
-	}
+	// 	enemy.addComponent(cmpAnimator);
+	// 	cmpAnimator.activate(true);
+	// }
 
 	function initViewport(_event: CustomEvent): void {
 		viewport = _event.detail;

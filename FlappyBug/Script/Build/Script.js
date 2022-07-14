@@ -111,12 +111,14 @@ var FlappyBug;
             this.mtxLocal.scaling = new ƒ.Vector3(0.19, 0.19, 0.19);
             this.rigidbody = new ƒ.ComponentRigidbody();
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
+            this.rigidbody.mtxPivot.scaling = new ƒ.Vector3(0.8, 0.8, 0.8);
             this.rigidbody.mass = 1;
             this.rigidbody.dampTranslation = 1;
             this.rigidbody.effectGravity = 0;
             this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
             this.rigidbody.typeBody = ƒ.BODY_TYPE.STATIC;
             this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.CUBE;
+            this.rigidbody.isTrigger = true;
             this.addComponent(this.rigidbody);
         }
         async initFlyingSprites() {
@@ -155,6 +157,26 @@ var FlappyBug;
             console.log(new ƒui.Controller(this, hud));
         }
         setHealth() {
+            this.health1 = true;
+            this.health2 = true;
+            this.health3 = true;
+        }
+        reduceHealth() {
+            if (this.health3) {
+                this.health3 = false;
+                this.setHealth();
+                return 2;
+            }
+            else if (this.health2) {
+                this.health2 = false;
+                this.setHealth();
+                return 1;
+            }
+            else {
+                this.health1 = false;
+                this.setHealth();
+                return 0;
+            }
         }
         static get() {
             return GameState.instance || new GameState();
@@ -259,6 +281,7 @@ var FlappyBug;
         ground = root.getChildrenByName("Ground")[0];
         player = new FlappyBug.Player();
         root.appendChild(player);
+        player.getComponent(ƒ.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, hndCollision, true);
         collectibles = root.getChildrenByName("Collectibles")[0];
         coin = new FlappyBug.Coin();
         collectibles.appendChild(coin);
@@ -267,16 +290,27 @@ var FlappyBug;
         enemies = root.getChildrenByName("Enemies")[0];
         enemy = new FlappyBug.Enemy();
         enemies.appendChild(enemy);
-        enemy.addComponent(new FlappyBug.MovementScript);
+        enemy.addComponent(new FlappyBug.SineMovementScript);
         ƒ.Time.game.set(0);
         hud.style.visibility = "visible";
         gameState = new FlappyBug.GameState();
         gameState.gameRunning = true;
         gameState.score = 0;
+        gameState.setHealth();
         FlappyBug.gameSpeed = startSpeed;
         // initAudio();
-        initEnemyAnimation();
+        // initEnemyAnimation();
         // canvas.requestPointerLock();
+    }
+    function hndCollision(_event) {
+        if (gameState.gameRunning != true)
+            return;
+        let obstacle = _event.cmpRigidbody.node;
+        console.log(obstacle.name);
+        if (obstacle.name == "Enemy") {
+            if (gameState.reduceHealth() == 0) {
+            }
+        }
     }
     // function initAudio(): void {
     // 	ƒ.AudioManager.default.listenTo(root);
@@ -286,34 +320,34 @@ var FlappyBug;
     // }
     // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
     // Höhe Gegner * Random(Anzahl an Steps)
-    function initEnemyAnimation() {
-        let animseq = new ƒ.AnimationSequence();
-        animseq.addKey(new ƒ.AnimationKey(0, 0));
-        animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
-        animseq.addKey(new ƒ.AnimationKey(3000, 0));
-        let animStructure = {
-            components: {
-                ComponentTransform: [
-                    {
-                        "ƒ.ComponentTransform": {
-                            mtxLocal: {
-                                translation: {
-                                    y: animseq
-                                }
-                            }
-                        }
-                    }
-                ]
-            }
-        };
-        let animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
-        let cmpAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
-        if (enemy.getComponent(ƒ.ComponentAnimator)) {
-            enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
-        }
-        enemy.addComponent(cmpAnimator);
-        cmpAnimator.activate(true);
-    }
+    // function initEnemyAnimation(): void {
+    // 	let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();
+    // 	animseq.addKey(new ƒ.AnimationKey(0, 0));
+    // 	animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
+    // 	animseq.addKey(new ƒ.AnimationKey(3000, 0));
+    // 	let animStructure: ƒ.AnimationStructure = {
+    // 		components: {
+    // 			ComponentTransform: [
+    // 				{
+    // 					"ƒ.ComponentTransform": {
+    // 						mtxLocal: {
+    // 							translation: {
+    // 								y: animseq
+    // 							}
+    // 						}
+    // 					}
+    // 				}
+    // 			]
+    // 		}
+    // 	};
+    // 	let animation: ƒ.Animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
+    // 	let cmpAnimator: ƒ.ComponentAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
+    // 	if (enemy.getComponent(ƒ.ComponentAnimator)) {
+    // 		enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
+    // 	}
+    // 	enemy.addComponent(cmpAnimator);
+    // 	cmpAnimator.activate(true);
+    // }
     function initViewport(_event) {
         viewport = _event.detail;
         viewport.camera.projectOrthographic();
