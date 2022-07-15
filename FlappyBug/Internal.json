@@ -74,6 +74,22 @@
       }
     }
   },
+  "Audio|2022-07-15T19:20:00.943Z|22598": {
+    "ƒ.Audio": {
+      "url": "Assets\\audio\\bug_splat.mp3",
+      "idResource": "Audio|2022-07-15T19:20:00.943Z|22598",
+      "name": "hit.mp3",
+      "type": "Audio"
+    }
+  },
+  "Audio|2022-07-15T19:20:52.512Z|15398": {
+    "ƒ.Audio": {
+      "url": "Assets\\audio\\game_over.mp3",
+      "idResource": "Audio|2022-07-15T19:20:52.512Z|15398",
+      "name": "game_over.mp3",
+      "type": "Audio"
+    }
+  },
   "Graph|2022-04-08T13:27:53.880Z|73360": {
     "ƒ.Graph": {
       "name": "Scene",
@@ -158,7 +174,71 @@
                 }
               ]
             },
-            "children": []
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "Ground_Trigger",
+                  "active": true,
+                  "components": {
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshCube|2022-04-08T13:28:34.667Z|69650",
+                          "pivot": {
+                            "translation": "[0, -0.4899999797344208, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[3.7099993228912354, 1, -0.4000000059604645]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[0, 0, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentRigidbody": [
+                      {
+                        "ƒ.ComponentRigidbody": {
+                          "initialization": "TO_PIVOT",
+                          "friction": 0.2,
+                          "restitution": 0.2,
+                          "mass": 1,
+                          "dampTranslation": 0.1,
+                          "dampRotation": 0.1,
+                          "effectGravity": 1,
+                          "typeBody": "STATIC",
+                          "typeCollider": "CUBE",
+                          "isTrigger": true,
+                          "id": 1,
+                          "pivot": {
+                            "translation": "[0, -0.8699999451637268, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[4, 0.12000000476837158, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              }
+            ]
           }
         },
         {
@@ -196,26 +276,6 @@
                       "active": true
                     },
                     "idMaterial": "Material|2022-04-08T13:45:06.268Z|84408"
-                  }
-                }
-              ]
-            },
-            "children": []
-          }
-        },
-        {
-          "ƒ.Node": {
-            "name": "Soundtrack",
-            "active": true,
-            "components": {
-              "ComponentAudio": [
-                {
-                  "ƒ.ComponentAudio": {
-                    "active": true,
-                    "idResource": "Audio|2022-05-12T15:11:50.146Z|24073",
-                    "playing": false,
-                    "loop": true,
-                    "volume": 1
                   }
                 }
               ]
@@ -301,10 +361,135 @@
             "components": {},
             "children": []
           }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Audio",
+            "active": true,
+            "components": {},
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "Soundtrack",
+                  "active": true,
+                  "components": {
+                    "ComponentAudio": [
+                      {
+                        "ƒ.ComponentAudio": {
+                          "active": true,
+                          "idResource": "Audio|2022-05-12T15:11:50.146Z|24073",
+                          "playing": false,
+                          "loop": true,
+                          "volume": 1
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "Hit",
+                  "active": true,
+                  "components": {
+                    "ComponentAudio": [
+                      {
+                        "ƒ.ComponentAudio": {
+                          "active": true,
+                          "idResource": "Audio|2022-07-15T19:20:00.943Z|22598",
+                          "playing": false,
+                          "loop": false,
+                          "volume": 1
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "End",
+                  "active": true,
+                  "components": {
+                    "ComponentAudio": [
+                      {
+                        "ƒ.ComponentAudio": {
+                          "active": true,
+                          "idResource": "Audio|2022-07-15T19:20:52.512Z|15398",
+                          "playing": false,
+                          "loop": false,
+                          "volume": 1
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "Coin",
+                  "active": true,
+                  "components": {
+                    "ComponentAudio": [
+                      {
+                        "ƒ.ComponentAudio": {
+                          "active": true,
+                          "idResource": "Audio|2022-07-15T19:22:54.957Z|44643",
+                          "playing": false,
+                          "loop": false,
+                          "volume": 1
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "Heart",
+                  "active": true,
+                  "components": {
+                    "ComponentAudio": [
+                      {
+                        "ƒ.ComponentAudio": {
+                          "active": true,
+                          "idResource": "Audio|2022-07-15T20:40:30.561Z|45596",
+                          "playing": false,
+                          "loop": false,
+                          "volume": 1
+                        }
+                      }
+                    ]
+                  },
+                  "children": []
+                }
+              }
+            ]
+          }
         }
       ],
       "idResource": "Graph|2022-04-08T13:27:53.880Z|73360",
       "type": "Graph"
+    }
+  },
+  "Audio|2022-07-15T19:22:54.957Z|44643": {
+    "ƒ.Audio": {
+      "url": "Assets\\audio\\coin.mp3",
+      "idResource": "Audio|2022-07-15T19:22:54.957Z|44643",
+      "name": "coin.mp3",
+      "type": "Audio"
+    }
+  },
+  "Audio|2022-07-15T20:40:30.561Z|45596": {
+    "ƒ.Audio": {
+      "url": "Assets\\audio\\heart.mp3",
+      "idResource": "Audio|2022-07-15T20:40:30.561Z|45596",
+      "name": "heart.mp3",
+      "type": "Audio"
     }
   }
 }

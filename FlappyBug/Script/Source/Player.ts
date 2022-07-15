@@ -4,8 +4,8 @@ namespace FlappyBug {
 
 	export class Player extends ƒ.Node {
 
-		private spriteNodeFly: ƒAid.NodeSprite;
-		private spriteNodeCrash: ƒAid.NodeSprite;
+		public spriteNodeFly: ƒAid.NodeSprite;
+		public spriteNodeCrash: ƒAid.NodeSprite;
 		private rigidbody: ƒ.ComponentRigidbody;
 		private cmpAudioFlying: ƒ.ComponentAudio;
 		private cmpAudioCrash: ƒ.ComponentAudio;
@@ -62,9 +62,9 @@ namespace FlappyBug {
 		private async initFlyingSprites(): Promise<void> {
 			let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
 			await imgSpriteSheet.load("Assets/images/sprites/bug-flying.png");
-			let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+			let playerFlyingCoat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
 
-			let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerFlyingSpriteAnimation", coat);
+			let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerFlyingSpriteAnimation", playerFlyingCoat);
 			animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
 
 			this.spriteNodeFly = new ƒAid.NodeSprite("SpriteFly");
@@ -81,17 +81,17 @@ namespace FlappyBug {
 		private async initCrashSprites(): Promise<void> {
 			let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
 			await imgSpriteSheet.load("Assets/images/sprites/bug-crash.png");
-			let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+			let playerCrashCoat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
 
-			let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", coat);
-			animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
+			let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", playerCrashCoat);
+			animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 742, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
 
 			this.spriteNodeCrash = new ƒAid.NodeSprite("SpriteCrash");
 			this.spriteNodeCrash.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
 			this.spriteNodeCrash.setAnimation(animation);
 			this.spriteNodeCrash.setFrameDirection(1);
 			this.spriteNodeCrash.mtxLocal.translateY(-0.5);
-			this.spriteNodeCrash.framerate = 30;
+			this.spriteNodeCrash.framerate = 8;
 
 			// this.addChild(this.spriteNodeCrash);
 			this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);

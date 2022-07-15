@@ -4,7 +4,7 @@ var FlappyBug;
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     class Coin extends ƒ.Node {
-        // private rigidbody: ƒ.ComponentRigidbody;
+        rigidbody;
         spriteNode;
         constructor() {
             super("Coin");
@@ -20,18 +20,20 @@ var FlappyBug;
             this.addComponent(new ƒ.ComponentTransform());
             this.mtxLocal.translation = new ƒ.Vector3(0, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.1, 0.1, 0.1);
-            // this.rigidbody = new ƒ.ComponentRigidbody();
-            // this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
-            // this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
-            // this.rigidbody.typeBody = ƒ.BODY_TYPE.KINEMATIC;
-            // this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.SPHERE;
-            // this.addComponent(this.rigidbody);
+            this.rigidbody = new ƒ.ComponentRigidbody();
+            this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
+            this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            this.rigidbody.effectGravity = 0;
+            this.rigidbody.typeBody = ƒ.BODY_TYPE.STATIC;
+            this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.SPHERE;
+            this.rigidbody.isTrigger = true;
+            this.addComponent(this.rigidbody);
         }
         async initSprites() {
             let imgSpriteSheet = new ƒ.TextureImage();
             await imgSpriteSheet.load("Assets/images/sprites/coin.png");
-            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
-            let animation = new ƒAid.SpriteSheetAnimation("CoinSpriteAnimation", coat);
+            let coinCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("CoinSpriteAnimation", coinCoat);
             animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 170, 170), 6, 165, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(200));
             this.spriteNode = new ƒAid.NodeSprite("CoinSprite");
             this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
@@ -96,8 +98,6 @@ var FlappyBug;
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updateEnemy);
         }
         updateEnemy = (_event) => {
-            // this.moveEnemy();
-            // this.repositionEnemy();
         };
         async initEnemy() {
             await this.initEnemyBodyandPosition();
@@ -124,8 +124,8 @@ var FlappyBug;
         async initFlyingSprites() {
             let imgSpriteSheet = new ƒ.TextureImage();
             await imgSpriteSheet.load("Assets/images/sprites/enemy.png");
-            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
-            let animation = new ƒAid.SpriteSheetAnimation("EnemyFlyingSpriteAnimation", coat);
+            let enemyCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("EnemyFlyingSpriteAnimation", enemyCoat);
             animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 598, 402), 4, 340, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(598));
             this.spriteNodeFly = new ƒAid.NodeSprite("SpriteFly");
             this.spriteNodeFly.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
@@ -147,9 +147,9 @@ var FlappyBug;
         gameRunning;
         score;
         hScore;
-        health1 = true;
-        health2 = true;
-        health3 = true;
+        heart1 = true;
+        heart2 = true;
+        heart3 = true;
         constructor() {
             super();
             GameState.instance = this;
@@ -157,23 +157,38 @@ var FlappyBug;
             console.log(new ƒui.Controller(this, hud));
         }
         setHealth() {
-            this.health1 = true;
-            this.health2 = true;
-            this.health3 = true;
+            if (this.heart1) {
+                document.querySelector("#heart1").setAttribute("class", "heart1enabled");
+            }
+            else {
+                document.querySelector("#heart1").setAttribute("class", "heart1disabled");
+            }
+            if (this.heart2) {
+                document.querySelector("#heart2").setAttribute("class", "heart2enabled");
+            }
+            else {
+                document.querySelector("#heart2").setAttribute("class", "heart2disabled");
+            }
+            if (this.heart3) {
+                document.querySelector("#heart3").setAttribute("class", "heart3enabled");
+            }
+            else {
+                document.querySelector("#heart3").setAttribute("class", "heart3disabled");
+            }
         }
         reduceHealth() {
-            if (this.health3) {
-                this.health3 = false;
+            if (this.heart3) {
+                this.heart3 = false;
                 this.setHealth();
                 return 2;
             }
-            else if (this.health2) {
-                this.health2 = false;
+            else if (this.heart2) {
+                this.heart2 = false;
                 this.setHealth();
                 return 1;
             }
             else {
-                this.health1 = false;
+                this.heart1 = false;
                 this.setHealth();
                 return 0;
             }
@@ -190,7 +205,7 @@ var FlappyBug;
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     class Heart extends ƒ.Node {
-        // private rigidbody: ƒ.ComponentRigidbody;
+        rigidbody;
         spriteNode;
         constructor() {
             super("Heart");
@@ -206,18 +221,20 @@ var FlappyBug;
             this.addComponent(new ƒ.ComponentTransform());
             this.mtxLocal.translation = new ƒ.Vector3(0, 0.2, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.1, 0.1, 0.1);
-            // this.rigidbody = new ƒ.ComponentRigidbody();
-            // this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
-            // this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
-            // this.rigidbody.typeBody = ƒ.BODY_TYPE.KINEMATIC;
-            // this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.SPHERE;
-            // this.addComponent(this.rigidbody);
+            this.rigidbody = new ƒ.ComponentRigidbody();
+            this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
+            this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            this.rigidbody.effectGravity = 0;
+            this.rigidbody.typeBody = ƒ.BODY_TYPE.STATIC;
+            this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.SPHERE;
+            this.rigidbody.isTrigger = true;
+            this.addComponent(this.rigidbody);
         }
         async initSprites() {
             let imgSpriteSheet = new ƒ.TextureImage();
             await imgSpriteSheet.load("Assets/images/sprites/heart.png");
-            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
-            let animation = new ƒAid.SpriteSheetAnimation("HeartSpriteAnimation", coat);
+            let heartCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("HeartSpriteAnimation", heartCoat);
             animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 564, 768), 6, 400, ƒ.ORIGIN2D.CENTER, ƒ.Vector2.X(0));
             this.spriteNode = new ƒAid.NodeSprite("HeartSprite");
             this.spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
@@ -248,7 +265,8 @@ var FlappyBug;
     let heart;
     let gameState;
     let startSpeed = 1;
-    // let soundtrack: ƒ.ComponentAudio;
+    let audio;
+    let soundtrack;
     let dialog;
     window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
@@ -265,7 +283,7 @@ var FlappyBug;
     function update(_event) {
         ƒ.Physics.simulate();
         if (gameState.gameRunning == true) {
-            animateBackground();
+            animateBackground(true);
             gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
         }
         if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && FlappyBug.gameSpeed < 3) {
@@ -279,6 +297,7 @@ var FlappyBug;
         root = viewport.getBranch();
         sky = root.getChildrenByName("Sky")[0];
         ground = root.getChildrenByName("Ground")[0];
+        audio = root.getChildrenByName("Audio")[0];
         player = new FlappyBug.Player();
         root.appendChild(player);
         player.getComponent(ƒ.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, hndCollision, true);
@@ -291,6 +310,7 @@ var FlappyBug;
         enemy = new FlappyBug.Enemy();
         enemies.appendChild(enemy);
         enemy.addComponent(new FlappyBug.SineMovementScript);
+        coin.addComponent(new FlappyBug.MovementScript);
         ƒ.Time.game.set(0);
         hud.style.visibility = "visible";
         gameState = new FlappyBug.GameState();
@@ -298,7 +318,7 @@ var FlappyBug;
         gameState.score = 0;
         gameState.setHealth();
         FlappyBug.gameSpeed = startSpeed;
-        // initAudio();
+        playSoundtrack();
         // initEnemyAnimation();
         // canvas.requestPointerLock();
     }
@@ -307,17 +327,49 @@ var FlappyBug;
             return;
         let obstacle = _event.cmpRigidbody.node;
         console.log(obstacle.name);
-        if (obstacle.name == "Enemy") {
+        if (obstacle.name == "Enemy" || obstacle.name == "Ground_Trigger") {
+            playAudio("hit").play(true);
             if (gameState.reduceHealth() == 0) {
+                soundtrack.play(false);
+                playAudio("end").play(true);
+                playAudio("hit").play(false);
+                player.removeChild(player.spriteNodeFly);
+                player.addChild(player.spriteNodeCrash);
+                animateBackground(false);
             }
         }
+        else if (obstacle.name == "Coin") {
+            gameState.score += 50;
+            playAudio("coin").play(true);
+        }
+        else if (obstacle.name == "Heart") {
+            playAudio("heart").play(true);
+        }
     }
-    // function initAudio(): void {
-    // 	ƒ.AudioManager.default.listenTo(root);
-    // 	soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
-    // 	soundtrack.play(true);
-    // 	soundtrack.volume = 0.8;
-    // }
+    function playAudio(name) {
+        switch (name) {
+            case "hit":
+                return audio.getChildrenByName("Hit")[0].getComponent(ƒ.ComponentAudio);
+                break;
+            case "end":
+                return audio.getChildrenByName("End")[0].getComponent(ƒ.ComponentAudio);
+                break;
+            case "coin":
+                return audio.getChildrenByName("Coin")[0].getComponent(ƒ.ComponentAudio);
+                break;
+            case "heart":
+                return audio.getChildrenByName("Heart")[0].getComponent(ƒ.ComponentAudio);
+                break;
+            default:
+                break;
+        }
+    }
+    function playSoundtrack() {
+        ƒ.AudioManager.default.listenTo(root);
+        soundtrack = root.getChildrenByName("Audio")[0].getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
+        soundtrack.play(true);
+        soundtrack.volume = 0.8;
+    }
     // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
     // Höhe Gegner * Random(Anzahl an Steps)
     // function initEnemyAnimation(): void {
@@ -354,10 +406,20 @@ var FlappyBug;
         viewport.camera.mtxPivot.translateZ(4.5);
         viewport.camera.mtxPivot.rotateY(180);
     }
-    function animateBackground() {
+    function animateBackground(action) {
         let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * FlappyBug.gameSpeed);
-        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * FlappyBug.gameSpeed);
+        switch (action) {
+            case true:
+                sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * FlappyBug.gameSpeed);
+                ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * FlappyBug.gameSpeed);
+                break;
+            case false:
+                sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0 * deltaTime * FlappyBug.gameSpeed);
+                ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0 * deltaTime * FlappyBug.gameSpeed);
+                break;
+            default:
+                break;
+        }
     }
     function increaseGameSpeed() {
         FlappyBug.gameSpeed += 0.015;
@@ -436,11 +498,20 @@ var FlappyBug;
         addComponent = () => {
             this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
             this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.straightMovement);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.reposition);
         };
         straightMovement = () => {
             let deltaTime = ƒ.Loop.timeFrameReal / 1000;
             this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0, 0));
         };
+        reposition = () => {
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2))
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
+        };
+        getRandomFloat(min, max, decimals) {
+            let str = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(str);
+        }
     }
     FlappyBug.MovementScript = MovementScript;
 })(FlappyBug || (FlappyBug = {}));
@@ -500,8 +571,8 @@ var FlappyBug;
         async initFlyingSprites() {
             let imgSpriteSheet = new ƒ.TextureImage();
             await imgSpriteSheet.load("Assets/images/sprites/bug-flying.png");
-            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
-            let animation = new ƒAid.SpriteSheetAnimation("PlayerFlyingSpriteAnimation", coat);
+            let playerFlyingCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("PlayerFlyingSpriteAnimation", playerFlyingCoat);
             animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
             this.spriteNodeFly = new ƒAid.NodeSprite("SpriteFly");
             this.spriteNodeFly.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
@@ -515,15 +586,15 @@ var FlappyBug;
         async initCrashSprites() {
             let imgSpriteSheet = new ƒ.TextureImage();
             await imgSpriteSheet.load("Assets/images/sprites/bug-crash.png");
-            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
-            let animation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", coat);
-            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 712, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
+            let playerCrashCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let animation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", playerCrashCoat);
+            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 742, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
             this.spriteNodeCrash = new ƒAid.NodeSprite("SpriteCrash");
             this.spriteNodeCrash.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
             this.spriteNodeCrash.setAnimation(animation);
             this.spriteNodeCrash.setFrameDirection(1);
             this.spriteNodeCrash.mtxLocal.translateY(-0.5);
-            this.spriteNodeCrash.framerate = 30;
+            this.spriteNodeCrash.framerate = 8;
             // this.addChild(this.spriteNodeCrash);
             this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
         }

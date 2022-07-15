@@ -4,7 +4,7 @@ namespace FlappyBug {
 
     export class Coin extends ƒ.Node {
 
-        // private rigidbody: ƒ.ComponentRigidbody;
+        private rigidbody: ƒ.ComponentRigidbody;
         private spriteNode: ƒAid.NodeSprite;
 
         constructor() {
@@ -25,20 +25,22 @@ namespace FlappyBug {
             this.mtxLocal.translation = new ƒ.Vector3(0, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.1, 0.1, 0.1);
 
-            // this.rigidbody = new ƒ.ComponentRigidbody();
-            // this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
-            // this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
-            // this.rigidbody.typeBody = ƒ.BODY_TYPE.KINEMATIC;
-            // this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.SPHERE;
-            // this.addComponent(this.rigidbody);
+            this.rigidbody = new ƒ.ComponentRigidbody();
+            this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
+            this.rigidbody.effectRotation = new ƒ.Vector3(0, 0, 0);
+            this.rigidbody.effectGravity = 0;
+            this.rigidbody.typeBody = ƒ.BODY_TYPE.STATIC;
+            this.rigidbody.typeCollider = ƒ.COLLIDER_TYPE.SPHERE;
+            this.rigidbody.isTrigger = true;
+            this.addComponent(this.rigidbody);
         }
 
         private async initSprites(): Promise<void> {
             let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
             await imgSpriteSheet.load("Assets/images/sprites/coin.png");
-            let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            let coinCoat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
 
-            let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("CoinSpriteAnimation", coat);
+            let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("CoinSpriteAnimation", coinCoat);
             animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 170, 170), 6, 165, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(200));
 
             this.spriteNode = new ƒAid.NodeSprite("CoinSprite");

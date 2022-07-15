@@ -1,6 +1,7 @@
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
     class Coin extends ƒ.Node {
+        private rigidbody;
         private spriteNode;
         constructor();
         private initCoin;
@@ -35,9 +36,9 @@ declare namespace FlappyBug {
         gameRunning: boolean;
         score: number;
         hScore: number;
-        health1: boolean;
-        health2: boolean;
-        health3: boolean;
+        heart1: boolean;
+        heart2: boolean;
+        heart3: boolean;
         constructor();
         setHealth(): void;
         reduceHealth(): number;
@@ -48,6 +49,7 @@ declare namespace FlappyBug {
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
     class Heart extends ƒ.Node {
+        private rigidbody;
         private spriteNode;
         constructor();
         private initHeart;
@@ -68,13 +70,16 @@ declare namespace FlappyBug {
         constructor();
         addComponent: () => void;
         straightMovement: () => void;
+        private reposition;
+        private getRandomFloat;
     }
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
+    import ƒAid = FudgeAid;
     class Player extends ƒ.Node {
-        private spriteNodeFly;
-        private spriteNodeCrash;
+        spriteNodeFly: ƒAid.NodeSprite;
+        spriteNodeCrash: ƒAid.NodeSprite;
         private rigidbody;
         private cmpAudioFlying;
         private cmpAudioCrash;

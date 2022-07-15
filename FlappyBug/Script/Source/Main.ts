@@ -21,7 +21,8 @@ namespace FlappyBug {
 	export let gameSpeed: number;
 	let startSpeed: number = 1;
 
-	// let soundtrack: ƒ.ComponentAudio;
+	let audio: ƒ.Node;
+	let soundtrack: ƒ.ComponentAudio;
 
 	let dialog: HTMLDialogElement;
 	window.addEventListener("load", init);
@@ -45,7 +46,7 @@ namespace FlappyBug {
 		ƒ.Physics.simulate();
 
 		if (gameState.gameRunning == true) {
-			animateBackground();
+			animateBackground(true);
 			gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
 		}
 		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && gameSpeed < 3) {
@@ -62,6 +63,7 @@ namespace FlappyBug {
 		root = viewport.getBranch();
 		sky = root.getChildrenByName("Sky")[0];
 		ground = root.getChildrenByName("Ground")[0];
+		audio = root.getChildrenByName("Audio")[0];
 		player = new Player();
 		root.appendChild(player);
 		player.getComponent(ƒ.ComponentRigidbody).addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, hndCollision, true);
@@ -76,6 +78,7 @@ namespace FlappyBug {
 		enemy = new Enemy();
 		enemies.appendChild(enemy);
 		enemy.addComponent(new SineMovementScript);
+		coin.addComponent(new MovementScript);
 
 		ƒ.Time.game.set(0);
 		hud.style.visibility = "visible";
@@ -85,7 +88,8 @@ namespace FlappyBug {
 		gameState.setHealth();
 		gameSpeed = startSpeed;
 
-		// initAudio();
+		playSoundtrack();
+
 		// initEnemyAnimation();
 
 		// canvas.requestPointerLock();
@@ -98,19 +102,49 @@ namespace FlappyBug {
 		let obstacle: ƒ.Node = _event.cmpRigidbody.node;
 		console.log(obstacle.name);
 
-		if (obstacle.name == "Enemy") {
-			if(gameState.reduceHealth() == 0) {
-
+		if (obstacle.name == "Enemy" || obstacle.name == "Ground_Trigger") {
+			playAudio("hit").play(true);
+			if (gameState.reduceHealth() == 0) {
+				soundtrack.play(false);
+				playAudio("end").play(true);
+				playAudio("hit").play(false);
+				player.removeChild(player.spriteNodeFly);
+				player.addChild(player.spriteNodeCrash);
+				animateBackground(false);
 			}
+		} else if (obstacle.name == "Coin") {
+			gameState.score += 50;
+			playAudio("coin").play(true);
+		} else if (obstacle.name == "Heart") {
+			playAudio("heart").play(true);
 		}
 	}
 
-	// function initAudio(): void {
-	// 	ƒ.AudioManager.default.listenTo(root);
-	// 	soundtrack = root.getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
-	// 	soundtrack.play(true);
-	// 	soundtrack.volume = 0.8;
-	// }
+	function playAudio(name: string): ƒ.ComponentAudio {
+		switch (name) {
+			case "hit":
+				return audio.getChildrenByName("Hit")[0].getComponent(ƒ.ComponentAudio);
+				break;
+			case "end":
+				return audio.getChildrenByName("End")[0].getComponent(ƒ.ComponentAudio);
+				break;
+			case "coin":
+				return audio.getChildrenByName("Coin")[0].getComponent(ƒ.ComponentAudio);
+				break;
+			case "heart":
+				return audio.getChildrenByName("Heart")[0].getComponent(ƒ.ComponentAudio);
+				break;
+			default:
+				break;
+		}
+	}
+
+	function playSoundtrack(): void {
+		ƒ.AudioManager.default.listenTo(root);
+		soundtrack = root.getChildrenByName("Audio")[0].getChildrenByName("Soundtrack")[0].getComponents(ƒ.ComponentAudio)[0];
+		soundtrack.play(true);
+		soundtrack.volume = 0.8;
+	}
 
 	// Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
 	// Höhe Gegner * Random(Anzahl an Steps)
@@ -154,10 +188,20 @@ namespace FlappyBug {
 		viewport.camera.mtxPivot.rotateY(180);
 	}
 
-	function animateBackground(): void {
+	function animateBackground(action: boolean): void {
 		let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * gameSpeed);
-		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * gameSpeed);
+		switch(action) {
+			case true:
+				sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * gameSpeed);
+				ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * gameSpeed);
+				break;
+			case false:
+				sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0 * deltaTime * gameSpeed);
+				ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0 * deltaTime * gameSpeed);
+				break;
+			default:
+				break;
+		}
 	}
 
 	function increaseGameSpeed(): void {

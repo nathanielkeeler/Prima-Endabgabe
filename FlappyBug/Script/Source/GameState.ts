@@ -6,9 +6,9 @@ namespace FlappyBug {
 		public gameRunning: boolean;
 		public score: number;
 		public hScore: number;
-		public health1: boolean = true;
-		public health2: boolean = true;
-		public health3: boolean = true;
+		public heart1: boolean = true;
+		public heart2: boolean = true;
+		public heart3: boolean = true;
 
 
 		public constructor() {
@@ -19,30 +19,42 @@ namespace FlappyBug {
 		}
 
 		public setHealth(): void {
-			this.health1 = true;
-			this.health2 = true;
-			this.health3 = true;
+			if (this.heart1) {
+				document.querySelector("#heart1").setAttribute("class", "heart1enabled");
+			} else {
+				document.querySelector("#heart1").setAttribute("class", "heart1disabled");
+			}
+			if (this.heart2) {
+				document.querySelector("#heart2").setAttribute("class", "heart2enabled");
+			} else {
+				document.querySelector("#heart2").setAttribute("class", "heart2disabled");
+			}
+			if (this.heart3) {
+				document.querySelector("#heart3").setAttribute("class", "heart3enabled");
+			} else {
+				document.querySelector("#heart3").setAttribute("class", "heart3disabled");
+			}
 		}
-		
+
 		public reduceHealth(): number {
-			if (this.health3) {
-				this.health3 = false
+			if (this.heart3) {
+				this.heart3 = false
 				this.setHealth();
 				return 2;
 			}
-			else if (this.health2) {
-				this.health2 = false
+			else if (this.heart2) {
+				this.heart2 = false
 				this.setHealth();
 				return 1;
 			}
 			else {
-				this.health1 = false
+				this.heart1 = false
 				this.setHealth();
 				return 0;
 			}
-			
+
 		}
-		
+
 		public static get(): GameState {
 			return GameState.instance || new GameState();
 		}
