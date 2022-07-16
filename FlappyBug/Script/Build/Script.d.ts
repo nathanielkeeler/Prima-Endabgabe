@@ -41,6 +41,7 @@ declare namespace FlappyBug {
         heart3: boolean;
         constructor();
         setHealth(): void;
+        addHealth(): void;
         reduceHealth(): number;
         static get(): GameState;
         protected reduceMutator(_mutator: ƒ.Mutator): void;

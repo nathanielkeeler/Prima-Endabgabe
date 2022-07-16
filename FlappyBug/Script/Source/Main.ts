@@ -47,7 +47,8 @@ namespace FlappyBug {
 
 		if (gameState.gameRunning == true) {
 			animateBackground(true);
-			gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
+			// gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
+			gameState.score += Math.floor(1 / 1000);
 		}
 		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && gameSpeed < 3) {
 			document.dispatchEvent(new Event("increaseGameSpeed"));
@@ -79,6 +80,7 @@ namespace FlappyBug {
 		enemies.appendChild(enemy);
 		enemy.addComponent(new SineMovementScript);
 		coin.addComponent(new MovementScript);
+		heart.addComponent(new MovementScript);
 
 		ƒ.Time.game.set(0);
 		hud.style.visibility = "visible";
@@ -113,10 +115,11 @@ namespace FlappyBug {
 				animateBackground(false);
 			}
 		} else if (obstacle.name == "Coin") {
-			gameState.score += 50;
+			gameState.score = Math.floor((ƒ.Time.game.get() / 1000) + 50);;
 			playAudio("coin").play(true);
 		} else if (obstacle.name == "Heart") {
 			playAudio("heart").play(true);
+			gameState.addHealth();
 		}
 	}
 

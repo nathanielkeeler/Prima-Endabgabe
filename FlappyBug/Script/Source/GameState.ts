@@ -36,23 +36,40 @@ namespace FlappyBug {
 			}
 		}
 
+		public addHealth(): void {
+			if (!this.heart1) {
+				this.heart3 = false;
+				this.setHealth();
+				return;
+			}
+			else if (!this.heart2) {
+				this.heart2 = true;
+				this.setHealth();
+				return;
+			}
+			else {
+				this.heart3 = true;
+				this.setHealth();
+				return;
+			}
+		}
+
 		public reduceHealth(): number {
 			if (this.heart3) {
-				this.heart3 = false
+				this.heart3 = false;
 				this.setHealth();
 				return 2;
 			}
 			else if (this.heart2) {
-				this.heart2 = false
+				this.heart2 = false;
 				this.setHealth();
 				return 1;
 			}
 			else {
-				this.heart1 = false
+				this.heart1 = false;
 				this.setHealth();
 				return 0;
 			}
-
 		}
 
 		public static get(): GameState {

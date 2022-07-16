@@ -176,6 +176,23 @@ var FlappyBug;
                 document.querySelector("#heart3").setAttribute("class", "heart3disabled");
             }
         }
+        addHealth() {
+            if (!this.heart1) {
+                this.heart3 = false;
+                this.setHealth();
+                return;
+            }
+            else if (!this.heart2) {
+                this.heart2 = true;
+                this.setHealth();
+                return;
+            }
+            else {
+                this.heart3 = true;
+                this.setHealth();
+                return;
+            }
+        }
         reduceHealth() {
             if (this.heart3) {
                 this.heart3 = false;
@@ -284,7 +301,8 @@ var FlappyBug;
         ƒ.Physics.simulate();
         if (gameState.gameRunning == true) {
             animateBackground(true);
-            gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
+            // gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
+            gameState.score += Math.floor(1 / 1000);
         }
         if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && FlappyBug.gameSpeed < 3) {
             document.dispatchEvent(new Event("increaseGameSpeed"));
@@ -311,6 +329,7 @@ var FlappyBug;
         enemies.appendChild(enemy);
         enemy.addComponent(new FlappyBug.SineMovementScript);
         coin.addComponent(new FlappyBug.MovementScript);
+        heart.addComponent(new FlappyBug.MovementScript);
         ƒ.Time.game.set(0);
         hud.style.visibility = "visible";
         gameState = new FlappyBug.GameState();
@@ -339,11 +358,13 @@ var FlappyBug;
             }
         }
         else if (obstacle.name == "Coin") {
-            gameState.score += 50;
+            gameState.score = Math.floor((ƒ.Time.game.get() / 1000) + 50);
+            ;
             playAudio("coin").play(true);
         }
         else if (obstacle.name == "Heart") {
             playAudio("heart").play(true);
+            gameState.addHealth();
         }
     }
     function playAudio(name) {
