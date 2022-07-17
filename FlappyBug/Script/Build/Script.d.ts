@@ -63,7 +63,7 @@ declare namespace FlappyBug {
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
-    class MovementScript extends ƒ.ComponentScript {
+    class LinearMovementScript extends ƒ.ComponentScript {
         static readonly iSubclass: number;
         message: string;
         private rigidbody;

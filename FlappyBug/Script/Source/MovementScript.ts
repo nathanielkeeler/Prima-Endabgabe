@@ -2,11 +2,11 @@ namespace FlappyBug {
     import ƒ = FudgeCore;
     ƒ.Project.registerScriptNamespace(FlappyBug);  // Register the namespace to FUDGE for serialization
 
-    export class MovementScript extends ƒ.ComponentScript {
+    export class LinearMovementScript extends ƒ.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
-        public static readonly iSubclass: number = ƒ.Component.registerSubclass(MovementScript);
+        public static readonly iSubclass: number = ƒ.Component.registerSubclass(LinearMovementScript);
         // Properties may be mutated by users in the editor via the automatically created user interface
-        public message: string = "MovementScript added to " + this.node;
+        public message: string = "LinearMovementScript added to " + this.node;
         private rigidbody: ƒ.ComponentRigidbody;
         private speed: number = 1;
 
@@ -31,8 +31,10 @@ namespace FlappyBug {
         };
 
         private reposition = (): void => {
-            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2))
-                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -30, 2)) {
+                let yPos: number = this.getRandomFloat(-0.75, 0.99, 1);
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
+            }
         }
 
         private getRandomFloat(min: number, max: number, decimals: number): number {

@@ -332,8 +332,8 @@ var FlappyBug;
         enemy = new FlappyBug.Enemy();
         enemies.appendChild(enemy);
         enemy.addComponent(new FlappyBug.SineMovementScript);
-        coin.addComponent(new FlappyBug.MovementScript);
-        heart.addComponent(new FlappyBug.MovementScript);
+        coin.addComponent(new FlappyBug.LinearMovementScript);
+        heart.addComponent(new FlappyBug.LinearMovementScript);
         ƒ.Time.game.set(0);
         hud.style.visibility = "visible";
         gameState = new FlappyBug.GameState();
@@ -344,6 +344,10 @@ var FlappyBug;
         gameState.setHealth();
         playSoundtrack();
         // canvas.requestPointerLock();
+    }
+    // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
+    // Höhe Gegner * Random(Anzahl an Steps)
+    function spawnObjects() {
     }
     function hndCollision(_event) {
         if (gameState.gameRunning != true)
@@ -373,8 +377,6 @@ var FlappyBug;
             gameState.addHealth();
         }
     }
-    // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
-    // Höhe Gegner * Random(Anzahl an Steps)
     function animateBackground() {
         let deltaTime = ƒ.Loop.timeFrameReal / 1000;
         sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * FlappyBug.gameSpeed);
@@ -472,11 +474,11 @@ var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
     ƒ.Project.registerScriptNamespace(FlappyBug); // Register the namespace to FUDGE for serialization
-    class MovementScript extends ƒ.ComponentScript {
+    class LinearMovementScript extends ƒ.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
-        static iSubclass = ƒ.Component.registerSubclass(MovementScript);
+        static iSubclass = ƒ.Component.registerSubclass(LinearMovementScript);
         // Properties may be mutated by users in the editor via the automatically created user interface
-        message = "MovementScript added to " + this.node;
+        message = "LinearMovementScript added to " + this.node;
         rigidbody;
         speed = 1;
         constructor() {
@@ -495,15 +497,17 @@ var FlappyBug;
             this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0, 0));
         };
         reposition = () => {
-            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2))
-                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -30, 2)) {
+                let yPos = this.getRandomFloat(-0.75, 0.99, 1);
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
+            }
         };
         getRandomFloat(min, max, decimals) {
             let str = (Math.random() * (max - min) + min).toFixed(decimals);
             return parseFloat(str);
         }
     }
-    FlappyBug.MovementScript = MovementScript;
+    FlappyBug.LinearMovementScript = LinearMovementScript;
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;
 (function (FlappyBug) {
@@ -624,11 +628,13 @@ var FlappyBug;
         };
         sineMovement = () => {
             let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-            this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0.002 * Math.sin(2 * this.rigidbody.getPosition().x), 0));
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0.0015 * Math.sin(3 * this.rigidbody.getPosition().x), 0));
         };
         reposition = () => {
-            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2))
-                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2)) {
+                let yPos = this.getRandomFloat(-0.5, 0.75, 1);
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
+            }
         };
         getRandomFloat(min, max, decimals) {
             let str = (Math.random() * (max - min) + min).toFixed(decimals);

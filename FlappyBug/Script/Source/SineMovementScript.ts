@@ -27,12 +27,14 @@ namespace FlappyBug {
 
         private sineMovement = (): void => {
             let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-            this.rigidbody.translateBody(new ƒ.Vector3(- this.speed * deltaTime * gameSpeed, 0.002 * Math.sin(2 * this.rigidbody.getPosition().x), 0));
+            this.rigidbody.translateBody(new ƒ.Vector3(- this.speed * deltaTime * gameSpeed, 0.0015 * Math.sin(3 * this.rigidbody.getPosition().x), 0));
         };
 
         private reposition = (): void => {
-            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2))
-                this.rigidbody.setPosition(new ƒ.Vector3(2.2, 0, 0));
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2)) {
+                let yPos: number = this.getRandomFloat(-0.5, 0.75, 1);
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
+            }
         }
 
         private getRandomFloat(min: number, max: number, decimals: number): number {

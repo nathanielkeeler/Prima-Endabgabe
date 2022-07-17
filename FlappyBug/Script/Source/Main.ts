@@ -89,8 +89,8 @@ namespace FlappyBug {
 		enemies.appendChild(enemy);
 
 		enemy.addComponent(new SineMovementScript);
-		coin.addComponent(new MovementScript);
-		heart.addComponent(new MovementScript);
+		coin.addComponent(new LinearMovementScript);
+		heart.addComponent(new LinearMovementScript);
 
 		ƒ.Time.game.set(0);
 		hud.style.visibility = "visible";
@@ -104,6 +104,12 @@ namespace FlappyBug {
 		playSoundtrack();
 
 		// canvas.requestPointerLock();
+	}
+
+	// Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
+	// Höhe Gegner * Random(Anzahl an Steps)
+	function spawnObjects(): void {
+
 	}
 
 	function hndCollision(_event: ƒ.EventPhysics): void {
@@ -137,9 +143,6 @@ namespace FlappyBug {
 			gameState.addHealth();
 		}
 	}
-
-	// Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
-	// Höhe Gegner * Random(Anzahl an Steps)
 
 	function animateBackground(): void {
 		let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
