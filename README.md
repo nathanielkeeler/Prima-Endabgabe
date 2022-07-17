@@ -14,10 +14,10 @@ Design-Document: <br>
 Instructions:   
 Fliegen -> Leertaste (hold) <br>
 Goal:
-- Überlebe solange du kannst! <br>
-- Werde nicht von den Vögeln gefressen<br>
-- Sammle Münzen um deinen Score zu erhöhen<br>
-- Sammle Herzen um länger am Leben zu bleiben
+- Survive as long as possible! <br>
+- Don't get snacked <br>
+- Collect coins for a higher score <br>
+- Collect hearts to survive longer
 
 
 Checklist
