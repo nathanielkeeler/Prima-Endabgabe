@@ -1,6 +1,11 @@
 namespace FlappyBug {
 	import ƒ = FudgeCore;
 
+	interface ExternalData {
+		[name: string]: number;
+	}
+	let externalData: ExternalData;
+
 	let viewport: ƒ.Viewport;
 	let canvas: HTMLCanvasElement;
 	let hud: HTMLElement;
@@ -28,16 +33,16 @@ namespace FlappyBug {
 
 	let dialog: HTMLDialogElement;
 	window.addEventListener("load", init);
-	document.addEventListener("interactiveViewportStarted", <EventListener>start);
+	document.addEventListener("interactiveViewportStarted", <EventListener><any>start);
 
 
-	function start(_event: CustomEvent): void {
+	async function start(_event: CustomEvent): Promise<void> {
 		initViewport(_event);
 		window.addEventListener("resize", () => {
 			canvas.width = window.innerWidth;
 		});
 
-		initGame();
+		await initGame();
 
 		ƒ.AudioManager.default.listenTo(root);
 		ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
@@ -50,7 +55,7 @@ namespace FlappyBug {
 		gametime = Math.floor(ƒ.Time.game.get() / 1000);
 
 		if (gameState.gameRunning == true) {
-			animateBackground(true);
+			animateBackground();
 			// gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
 			gameState.score = gametime;
 		}
@@ -64,7 +69,7 @@ namespace FlappyBug {
 	}
 
 
-	function initGame(): void {
+	async function initGame(): Promise<void> {
 		root = viewport.getBranch();
 		sky = root.getChildrenByName("Sky")[0];
 		ground = root.getChildrenByName("Ground")[0];
@@ -97,8 +102,6 @@ namespace FlappyBug {
 
 		playSoundtrack();
 
-		// initEnemyAnimation();
-
 		// canvas.requestPointerLock();
 	}
 
@@ -119,7 +122,6 @@ namespace FlappyBug {
 				player.removeChild(player.spriteNodeFly);
 				player.addChild(player.spriteNodeCrash);
 
-				animateBackground(false);
 			}
 		} else if (obstacle.name == "Coin") {
 			gameState.score = gametime + 50;
@@ -161,59 +163,13 @@ namespace FlappyBug {
 	// Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
 	// Höhe Gegner * Random(Anzahl an Steps)
 
-	// function initEnemyAnimation(): void {
-	// 	let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();
-	// 	animseq.addKey(new ƒ.AnimationKey(0, 0));
-	// 	animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
-	// 	animseq.addKey(new ƒ.AnimationKey(3000, 0));
 
-	// 	let animStructure: ƒ.AnimationStructure = {
-	// 		components: {
-	// 			ComponentTransform: [
-	// 				{
-	// 					"ƒ.ComponentTransform": {
-	// 						mtxLocal: {
-	// 							translation: {
-	// 								y: animseq
-	// 							}
-	// 						}
-	// 					}
-	// 				}
-	// 			]
-	// 		}
-	// 	};
 
-	// 	let animation: ƒ.Animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
-	// 	let cmpAnimator: ƒ.ComponentAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
-	// 	if (enemy.getComponent(ƒ.ComponentAnimator)) {
-	// 		enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
-	// 	}
-
-	// 	enemy.addComponent(cmpAnimator);
-	// 	cmpAnimator.activate(true);
-	// }
-
-	function initViewport(_event: CustomEvent): void {
-		viewport = _event.detail;
-		viewport.camera.projectOrthographic();
-		viewport.camera.mtxPivot.translateZ(4.5);
-		viewport.camera.mtxPivot.rotateY(180);
-	}
-
-	function animateBackground(action: boolean): void {
+	function animateBackground(): void {
 		let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-		switch (action) {
-			case true:
-				sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * gameSpeed);
-				ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * gameSpeed);
-				break;
-			case false:
-				sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0 * deltaTime * gameSpeed);
-				ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0 * deltaTime * gameSpeed);
-				break;
-			default:
-				break;
-		}
+
+		sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * gameSpeed);
+		ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * gameSpeed);
 	}
 
 	function increaseGameSpeed(): void {
@@ -248,6 +204,12 @@ namespace FlappyBug {
 	// 	}
 	// }
 
+	function initViewport(_event: CustomEvent): void {
+		viewport = _event.detail;
+		viewport.camera.projectOrthographic();
+		viewport.camera.mtxPivot.translateZ(4.5);
+		viewport.camera.mtxPivot.rotateY(180);
+	}
 
 
 	// Imported the following two functions from index.html

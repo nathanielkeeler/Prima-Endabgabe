@@ -268,6 +268,7 @@ var FlappyBug;
 var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
+    let externalData;
     let viewport;
     let canvas;
     let hud;
@@ -288,12 +289,12 @@ var FlappyBug;
     let dialog;
     window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
-    function start(_event) {
+    async function start(_event) {
         initViewport(_event);
         window.addEventListener("resize", () => {
             canvas.width = window.innerWidth;
         });
-        initGame();
+        await initGame();
         ƒ.AudioManager.default.listenTo(root);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 120, true);
@@ -303,7 +304,7 @@ var FlappyBug;
         // let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
         gametime = Math.floor(ƒ.Time.game.get() / 1000);
         if (gameState.gameRunning == true) {
-            animateBackground(true);
+            animateBackground();
             // gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
             gameState.score = gametime;
         }
@@ -314,7 +315,7 @@ var FlappyBug;
         viewport.draw();
         ƒ.AudioManager.default.update();
     }
-    function initGame() {
+    async function initGame() {
         root = viewport.getBranch();
         sky = root.getChildrenByName("Sky")[0];
         ground = root.getChildrenByName("Ground")[0];
@@ -341,7 +342,6 @@ var FlappyBug;
         gameState.setHealth();
         FlappyBug.gameSpeed = startSpeed;
         playSoundtrack();
-        // initEnemyAnimation();
         // canvas.requestPointerLock();
     }
     function hndCollision(_event) {
@@ -357,7 +357,6 @@ var FlappyBug;
                 playAudio("hit").play(false);
                 player.removeChild(player.spriteNodeFly);
                 player.addChild(player.spriteNodeCrash);
-                animateBackground(false);
             }
         }
         else if (obstacle.name == "Coin") {
@@ -396,54 +395,10 @@ var FlappyBug;
     }
     // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
     // Höhe Gegner * Random(Anzahl an Steps)
-    // function initEnemyAnimation(): void {
-    // 	let animseq: ƒ.AnimationSequence = new ƒ.AnimationSequence();
-    // 	animseq.addKey(new ƒ.AnimationKey(0, 0));
-    // 	animseq.addKey(new ƒ.AnimationKey(1500, 0.2));
-    // 	animseq.addKey(new ƒ.AnimationKey(3000, 0));
-    // 	let animStructure: ƒ.AnimationStructure = {
-    // 		components: {
-    // 			ComponentTransform: [
-    // 				{
-    // 					"ƒ.ComponentTransform": {
-    // 						mtxLocal: {
-    // 							translation: {
-    // 								y: animseq
-    // 							}
-    // 						}
-    // 					}
-    // 				}
-    // 			]
-    // 		}
-    // 	};
-    // 	let animation: ƒ.Animation = new ƒ.Animation("enemyWaveAnimation", animStructure, 120);
-    // 	let cmpAnimator: ƒ.ComponentAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE["LOOP"], ƒ.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
-    // 	if (enemy.getComponent(ƒ.ComponentAnimator)) {
-    // 		enemy.removeComponent(enemy.getComponent(ƒ.ComponentAnimator));
-    // 	}
-    // 	enemy.addComponent(cmpAnimator);
-    // 	cmpAnimator.activate(true);
-    // }
-    function initViewport(_event) {
-        viewport = _event.detail;
-        viewport.camera.projectOrthographic();
-        viewport.camera.mtxPivot.translateZ(4.5);
-        viewport.camera.mtxPivot.rotateY(180);
-    }
-    function animateBackground(action) {
+    function animateBackground() {
         let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-        switch (action) {
-            case true:
-                sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * FlappyBug.gameSpeed);
-                ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * FlappyBug.gameSpeed);
-                break;
-            case false:
-                sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0 * deltaTime * FlappyBug.gameSpeed);
-                ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0 * deltaTime * FlappyBug.gameSpeed);
-                break;
-            default:
-                break;
-        }
+        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * FlappyBug.gameSpeed);
+        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * FlappyBug.gameSpeed);
     }
     function increaseGameSpeed() {
         FlappyBug.gameSpeed += 0.015;
@@ -471,6 +426,12 @@ var FlappyBug;
     // 		localStorage.setItem("HighScore", JSON.stringify(gameState.score));
     // 	}
     // }
+    function initViewport(_event) {
+        viewport = _event.detail;
+        viewport.camera.projectOrthographic();
+        viewport.camera.mtxPivot.translateZ(4.5);
+        viewport.camera.mtxPivot.rotateY(180);
+    }
     // Imported the following two functions from index.html
     function init(_event) {
         hud = document.getElementById("HUD");
