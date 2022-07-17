@@ -337,6 +337,7 @@ var FlappyBug;
         ƒ.Time.game.set(0);
         hud.style.visibility = "visible";
         gameState = new FlappyBug.GameState();
+        await getData();
         gameState.gameRunning = true;
         gameState.score = 0;
         gameState.setHealth();
@@ -357,6 +358,9 @@ var FlappyBug;
                 playAudio("hit").play(false);
                 player.removeChild(player.spriteNodeFly);
                 player.addChild(player.spriteNodeCrash);
+                console.log("Your Score: " + gameState.score);
+                saveData();
+                ƒ.Loop.stop();
             }
         }
         else if (obstacle.name == "Coin") {
@@ -367,6 +371,40 @@ var FlappyBug;
         else if (obstacle.name == "Heart") {
             playAudio("heart").play(true);
             gameState.addHealth();
+        }
+    }
+    // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
+    // Höhe Gegner * Random(Anzahl an Steps)
+    function animateBackground() {
+        let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * FlappyBug.gameSpeed);
+        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * FlappyBug.gameSpeed);
+    }
+    function increaseGameSpeed() {
+        FlappyBug.gameSpeed += 0.015;
+    }
+    async function getData() {
+        let data = await fetchData();
+        let fetchedHighscore = data["startHighscore"];
+        startSpeed = data["startSpeed"];
+        gameState.hScore = localStorage.getItem("Highscore");
+        if (fetchedHighscore > gameState.hScore)
+            gameState.hScore = fetchedHighscore;
+    }
+    async function fetchData() {
+        try {
+            const response = await fetch("data.json");
+            externalData = await response.json();
+            return externalData;
+        }
+        catch (error) {
+            return error;
+        }
+    }
+    function saveData() {
+        if (gameState.score > gameState.hScore) {
+            gameState.hScore = gameState.score;
+            localStorage.setItem("Highscore", JSON.stringify(gameState.score));
         }
     }
     function playAudio(name) {
@@ -393,39 +431,6 @@ var FlappyBug;
         soundtrack.play(true);
         soundtrack.volume = 0.8;
     }
-    // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
-    // Höhe Gegner * Random(Anzahl an Steps)
-    function animateBackground() {
-        let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-        sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * FlappyBug.gameSpeed);
-        ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * FlappyBug.gameSpeed);
-    }
-    function increaseGameSpeed() {
-        FlappyBug.gameSpeed += 0.015;
-    }
-    // async function getData() {
-    // 	let data = await fetchData();
-    // 	let fetchedHighscore: number = data.data.startHighscore;
-    // 	startSpeed = data.data.startSpeed;
-    // 	gameState.hScore = <number><unknown>localStorage.getItem("HighScore")
-    // 	if (fetchedHighscore > gameState.hScore)
-    // 		gameState.hScore = fetchedHighscore;
-    // }
-    // async function fetchData() {
-    // 	try {
-    // 		const response = await fetch("data.json");
-    // 		const responseObj = await response.json();
-    // 		return responseObj;
-    // 	} catch (error) {
-    // 		return error;
-    // 	}
-    // }
-    // function saveData() {
-    // 	if (gameState.score > gameState.hScore) {
-    // 		gameState.hScore = gameState.score;
-    // 		localStorage.setItem("HighScore", JSON.stringify(gameState.score));
-    // 	}
-    // }
     function initViewport(_event) {
         viewport = _event.detail;
         viewport.camera.projectOrthographic();
