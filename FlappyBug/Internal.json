@@ -90,6 +90,22 @@
       "type": "Audio"
     }
   },
+  "Audio|2022-07-15T19:22:54.957Z|44643": {
+    "ƒ.Audio": {
+      "url": "Assets\\audio\\coin.mp3",
+      "idResource": "Audio|2022-07-15T19:22:54.957Z|44643",
+      "name": "coin.mp3",
+      "type": "Audio"
+    }
+  },
+  "Audio|2022-07-15T20:40:30.561Z|45596": {
+    "ƒ.Audio": {
+      "url": "Assets\\audio\\heart.mp3",
+      "idResource": "Audio|2022-07-15T20:40:30.561Z|45596",
+      "name": "heart.mp3",
+      "type": "Audio"
+    }
+  },
   "Graph|2022-04-08T13:27:53.880Z|73360": {
     "ƒ.Graph": {
       "name": "Scene",
@@ -460,7 +476,7 @@
                           "idResource": "Audio|2022-07-15T20:40:30.561Z|45596",
                           "playing": false,
                           "loop": false,
-                          "volume": 1
+                          "volume": 0.3999999165534973
                         }
                       }
                     ]
@@ -474,22 +490,6 @@
       ],
       "idResource": "Graph|2022-04-08T13:27:53.880Z|73360",
       "type": "Graph"
-    }
-  },
-  "Audio|2022-07-15T19:22:54.957Z|44643": {
-    "ƒ.Audio": {
-      "url": "Assets\\audio\\coin.mp3",
-      "idResource": "Audio|2022-07-15T19:22:54.957Z|44643",
-      "name": "coin.mp3",
-      "type": "Audio"
-    }
-  },
-  "Audio|2022-07-15T20:40:30.561Z|45596": {
-    "ƒ.Audio": {
-      "url": "Assets\\audio\\heart.mp3",
-      "idResource": "Audio|2022-07-15T20:40:30.561Z|45596",
-      "name": "heart.mp3",
-      "type": "Audio"
     }
   }
 }

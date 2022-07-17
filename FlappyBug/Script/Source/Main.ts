@@ -24,6 +24,8 @@ namespace FlappyBug {
 	let audio: ƒ.Node;
 	let soundtrack: ƒ.ComponentAudio;
 
+	let gametime: number;
+
 	let dialog: HTMLDialogElement;
 	window.addEventListener("load", init);
 	document.addEventListener("interactiveViewportStarted", <EventListener>start);
@@ -44,11 +46,13 @@ namespace FlappyBug {
 
 	function update(_event: Event): void {
 		ƒ.Physics.simulate();
+		// let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
+		gametime = Math.floor(ƒ.Time.game.get() / 1000);
 
 		if (gameState.gameRunning == true) {
 			animateBackground(true);
 			// gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
-			gameState.score += Math.floor(1 / 1000);
+			gameState.score = gametime;
 		}
 		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && gameSpeed < 3) {
 			document.dispatchEvent(new Event("increaseGameSpeed"));
@@ -78,6 +82,7 @@ namespace FlappyBug {
 		enemies = root.getChildrenByName("Enemies")[0];
 		enemy = new Enemy();
 		enemies.appendChild(enemy);
+
 		enemy.addComponent(new SineMovementScript);
 		coin.addComponent(new MovementScript);
 		heart.addComponent(new MovementScript);
@@ -110,13 +115,17 @@ namespace FlappyBug {
 				soundtrack.play(false);
 				playAudio("end").play(true);
 				playAudio("hit").play(false);
+
 				player.removeChild(player.spriteNodeFly);
 				player.addChild(player.spriteNodeCrash);
+
 				animateBackground(false);
 			}
 		} else if (obstacle.name == "Coin") {
-			gameState.score = Math.floor((ƒ.Time.game.get() / 1000) + 50);;
+			gameState.score = gametime + 50;
+			// gametime and coin system need fixing
 			playAudio("coin").play(true);
+
 		} else if (obstacle.name == "Heart") {
 			playAudio("heart").play(true);
 			gameState.addHealth();
@@ -193,7 +202,7 @@ namespace FlappyBug {
 
 	function animateBackground(action: boolean): void {
 		let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-		switch(action) {
+		switch (action) {
 			case true:
 				sky.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.075 * deltaTime * gameSpeed);
 				ground.getComponent(ƒ.ComponentMaterial).mtxPivot.translateX(0.4 * deltaTime * gameSpeed);

@@ -284,6 +284,7 @@ var FlappyBug;
     let startSpeed = 1;
     let audio;
     let soundtrack;
+    let gametime;
     let dialog;
     window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
@@ -299,10 +300,12 @@ var FlappyBug;
     }
     function update(_event) {
         ƒ.Physics.simulate();
+        // let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
+        gametime = Math.floor(ƒ.Time.game.get() / 1000);
         if (gameState.gameRunning == true) {
             animateBackground(true);
             // gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
-            gameState.score += Math.floor(1 / 1000);
+            gameState.score = gametime;
         }
         if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && FlappyBug.gameSpeed < 3) {
             document.dispatchEvent(new Event("increaseGameSpeed"));
@@ -358,8 +361,8 @@ var FlappyBug;
             }
         }
         else if (obstacle.name == "Coin") {
-            gameState.score = Math.floor((ƒ.Time.game.get() / 1000) + 50);
-            ;
+            gameState.score = gametime + 50;
+            // gametime and coin system need fixing
             playAudio("coin").play(true);
         }
         else if (obstacle.name == "Heart") {
@@ -609,7 +612,7 @@ var FlappyBug;
             await imgSpriteSheet.load("Assets/images/sprites/bug-crash.png");
             let playerCrashCoat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
             let animation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", playerCrashCoat);
-            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 742, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
+            animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 742, 600), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
             this.spriteNodeCrash = new ƒAid.NodeSprite("SpriteCrash");
             this.spriteNodeCrash.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
             this.spriteNodeCrash.setAnimation(animation);

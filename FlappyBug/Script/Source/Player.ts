@@ -84,7 +84,7 @@ namespace FlappyBug {
 			let playerCrashCoat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
 
 			let animation: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("PlayerCrashSpriteAnimation", playerCrashCoat);
-			animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 742, 520), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
+			animation.generateByGrid(ƒ.Rectangle.GET(1, 1, 742, 600), 11, 500, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(714));
 
 			this.spriteNodeCrash = new ƒAid.NodeSprite("SpriteCrash");
 			this.spriteNodeCrash.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
@@ -95,7 +95,7 @@ namespace FlappyBug {
 
 			// this.addChild(this.spriteNodeCrash);
 			this.getComponent(ƒ.ComponentMaterial).clrPrimary = new ƒ.Color(0, 0, 0, 0);
-		}
+		} 
 
 		private async initAudio(): Promise<void> {
 			this.flyingSound = new ƒ.Audio("Assets/audio/bug_flying.mp3");
