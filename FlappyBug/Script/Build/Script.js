@@ -387,7 +387,7 @@ var FlappyBug;
         let data = await fetchData();
         let fetchedHighscore = data["startHighscore"];
         startSpeed = data["startSpeed"];
-        gameState.hScore = localStorage.getItem("Highscore");
+        gameState.hScore = window.localStorage.getItem("Highscore");
         if (fetchedHighscore > gameState.hScore)
             gameState.hScore = fetchedHighscore;
     }
@@ -404,7 +404,7 @@ var FlappyBug;
     function saveData() {
         if (gameState.score > gameState.hScore) {
             gameState.hScore = gameState.score;
-            localStorage.setItem("Highscore", JSON.stringify(gameState.score));
+            window.localStorage.setItem("Highscore", JSON.stringify(gameState.score));
         }
     }
     function playAudio(name) {
