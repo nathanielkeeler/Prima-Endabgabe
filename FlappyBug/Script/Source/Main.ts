@@ -24,7 +24,7 @@ namespace FlappyBug {
 
 	let gameState: GameState;
 	export let gameSpeed: number;
-	let startSpeed: number = 1;
+	let startSpeed: number;
 
 	let audio: ƒ.Node;
 	let soundtrack: ƒ.ComponentAudio;
@@ -96,10 +96,10 @@ namespace FlappyBug {
 		hud.style.visibility = "visible";
 		gameState = new GameState();
 		await getData();
+		gameSpeed = startSpeed;
 		gameState.gameRunning = true;
 		gameState.score = 0;
 		gameState.setHealth();
-		gameSpeed = startSpeed;
 
 		playSoundtrack();
 
