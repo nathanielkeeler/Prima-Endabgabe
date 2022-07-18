@@ -77,21 +77,9 @@ namespace FlappyBug {
 		player = new Player();
 		root.appendChild(player);
 		player.getComponent(ƒ.ComponentRigidbody).addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, hndCollision, true);
-
 		collectibles = root.getChildrenByName("Collectibles")[0];
-		coin = new Coin();
-		collectibles.appendChild(coin);
-		heart = new Heart();
-		collectibles.appendChild(heart);
-
 		enemies = root.getChildrenByName("Enemies")[0];
-		enemy = new Enemy();
-		enemies.appendChild(enemy);
-
-		enemy.addComponent(new SineMovementScript);
-		coin.addComponent(new LinearMovementScript);
-		heart.addComponent(new LinearMovementScript);
-
+		
 		ƒ.Time.game.set(0);
 		hud.style.visibility = "visible";
 		gameState = new GameState();
@@ -101,6 +89,7 @@ namespace FlappyBug {
 		gameState.score = 0;
 		gameState.setHealth();
 
+		spawnObjects();
 		playSoundtrack();
 
 		// canvas.requestPointerLock();
@@ -109,7 +98,24 @@ namespace FlappyBug {
 	// Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
 	// Höhe Gegner * Random(Anzahl an Steps)
 	function spawnObjects(): void {
+		for(let i=0; i <= 5; i++) {
+			enemy = new Enemy();
 
+			if(i%2 == 0)
+				enemy.addComponent(new SineMovementScript);
+			else
+				enemy.addComponent(new LinearMovementScript);
+
+			enemies.appendChild(enemy);
+		}
+
+		coin = new Coin();
+		collectibles.appendChild(coin);
+		coin.addComponent(new CoinMovementScript);
+
+		heart = new Heart();
+		collectibles.appendChild(heart);
+		heart.addComponent(new HeartMovementScript);
 	}
 
 	function hndCollision(_event: ƒ.EventPhysics): void {

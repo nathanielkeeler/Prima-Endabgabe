@@ -2,11 +2,11 @@ namespace FlappyBug {
     import ƒ = FudgeCore;
     ƒ.Project.registerScriptNamespace(FlappyBug);  // Register the namespace to FUDGE for serialization
 
-    export class LinearMovementScript extends ƒ.ComponentScript {
+    export class CoinMovementScript extends ƒ.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
-        public static readonly iSubclass: number = ƒ.Component.registerSubclass(LinearMovementScript);
+        public static readonly iSubclass: number = ƒ.Component.registerSubclass(CoinMovementScript);
         // Properties may be mutated by users in the editor via the automatically created user interface
-        public message: string = "LinearMovementScript added to " + this.node;
+        public message: string = "CoinMovementScript added to " + this.node;
         private rigidbody: ƒ.ComponentRigidbody;
         private speed: number = 1;
 
@@ -15,11 +15,12 @@ namespace FlappyBug {
             super();
 
             if (ƒ.Project.mode == ƒ.MODE.EDITOR) return;
-
+            
             this.addEventListener(ƒ.EVENT.COMPONENT_ADD, this.addComponent);
         }
 
         public addComponent = (): void => {
+            this.node.mtxLocal.translation = new ƒ.Vector3(this.getRandomFloat(2.2, 10, 2), this.getRandomFloat(-0.75, 0.85, 2), 0);
             this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
             this.node.addEventListener(ƒ.EVENT.RENDER_PREPARE, this.straightMovement);
             this.node.addEventListener(ƒ.EVENT.RENDER_PREPARE, this.reposition);
@@ -31,8 +32,8 @@ namespace FlappyBug {
         };
 
         private reposition = (): void => {
-            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -30, 2)) {
-                let yPos: number = this.getRandomFloat(-0.75, 0.99, 1);
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-20, -80, 1)) {
+                let yPos: number = this.getRandomFloat(-0.5, 0.75, 1);
                 this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
             }
         }

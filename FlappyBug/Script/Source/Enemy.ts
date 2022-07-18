@@ -28,12 +28,11 @@ namespace FlappyBug {
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("EnemyMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("EnemyMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
-            this.mtxLocal.translation = new ƒ.Vector3(2.2, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.19, 0.19, 0.19);
 
             this.rigidbody = new ƒ.ComponentRigidbody();
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
-            this.rigidbody.mtxPivot.scaling = new ƒ.Vector3(0.8, 0.8, 0.8);
+            this.rigidbody.mtxPivot.scaling = new ƒ.Vector3(0.75, 0.75, 0.75);
             this.rigidbody.mass = 1;
             this.rigidbody.dampTranslation = 1;
             this.rigidbody.effectGravity = 0;

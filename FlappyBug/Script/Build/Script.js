@@ -18,7 +18,6 @@ var FlappyBug;
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("CoinMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("CoinMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
-            this.mtxLocal.translation = new ƒ.Vector3(0, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.1, 0.1, 0.1);
             this.rigidbody = new ƒ.ComponentRigidbody();
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
@@ -46,6 +45,46 @@ var FlappyBug;
         }
     }
     FlappyBug.Coin = Coin;
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
+    var ƒ = FudgeCore;
+    ƒ.Project.registerScriptNamespace(FlappyBug); // Register the namespace to FUDGE for serialization
+    class CoinMovementScript extends ƒ.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = ƒ.Component.registerSubclass(CoinMovementScript);
+        // Properties may be mutated by users in the editor via the automatically created user interface
+        message = "CoinMovementScript added to " + this.node;
+        rigidbody;
+        speed = 1;
+        constructor() {
+            super();
+            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+                return;
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.addComponent);
+        }
+        addComponent = () => {
+            this.node.mtxLocal.translation = new ƒ.Vector3(this.getRandomFloat(2.2, 10, 2), this.getRandomFloat(-0.75, 0.85, 2), 0);
+            this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.straightMovement);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.reposition);
+        };
+        straightMovement = () => {
+            let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0, 0));
+        };
+        reposition = () => {
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-20, -80, 1)) {
+                let yPos = this.getRandomFloat(-0.5, 0.75, 1);
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
+            }
+        };
+        getRandomFloat(min, max, decimals) {
+            let str = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(str);
+        }
+    }
+    FlappyBug.CoinMovementScript = CoinMovementScript;
 })(FlappyBug || (FlappyBug = {}));
 var Script;
 (function (Script) {
@@ -107,11 +146,10 @@ var FlappyBug;
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("EnemyMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("EnemyMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
-            this.mtxLocal.translation = new ƒ.Vector3(2.2, 0, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.19, 0.19, 0.19);
             this.rigidbody = new ƒ.ComponentRigidbody();
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_PIVOT;
-            this.rigidbody.mtxPivot.scaling = new ƒ.Vector3(0.8, 0.8, 0.8);
+            this.rigidbody.mtxPivot.scaling = new ƒ.Vector3(0.75, 0.75, 0.75);
             this.rigidbody.mass = 1;
             this.rigidbody.dampTranslation = 1;
             this.rigidbody.effectGravity = 0;
@@ -236,7 +274,6 @@ var FlappyBug;
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("HeartMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("HeartMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
-            this.mtxLocal.translation = new ƒ.Vector3(0, 0.2, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.1, 0.1, 0.1);
             this.rigidbody = new ƒ.ComponentRigidbody();
             this.rigidbody.initialization = ƒ.BODY_INIT.TO_MESH;
@@ -264,6 +301,86 @@ var FlappyBug;
         }
     }
     FlappyBug.Heart = Heart;
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
+    var ƒ = FudgeCore;
+    ƒ.Project.registerScriptNamespace(FlappyBug); // Register the namespace to FUDGE for serialization
+    class HeartMovementScript extends ƒ.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = ƒ.Component.registerSubclass(HeartMovementScript);
+        // Properties may be mutated by users in the editor via the automatically created user interface
+        message = "HeartMovementScript added to " + this.node;
+        rigidbody;
+        speed = 1;
+        constructor() {
+            super();
+            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+                return;
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.addComponent);
+        }
+        addComponent = () => {
+            this.node.mtxLocal.translation = new ƒ.Vector3(this.getRandomFloat(2.2, 10, 2), this.getRandomFloat(-0.75, 0.85, 2), 0);
+            this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.straightMovement);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.reposition);
+        };
+        straightMovement = () => {
+            let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0, 0));
+        };
+        reposition = () => {
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-50, -150, 1)) {
+                let yPos = this.getRandomFloat(-0.5, 0.75, 1);
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
+            }
+        };
+        getRandomFloat(min, max, decimals) {
+            let str = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(str);
+        }
+    }
+    FlappyBug.HeartMovementScript = HeartMovementScript;
+})(FlappyBug || (FlappyBug = {}));
+var FlappyBug;
+(function (FlappyBug) {
+    var ƒ = FudgeCore;
+    ƒ.Project.registerScriptNamespace(FlappyBug); // Register the namespace to FUDGE for serialization
+    class LinearMovementScript extends ƒ.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = ƒ.Component.registerSubclass(LinearMovementScript);
+        // Properties may be mutated by users in the editor via the automatically created user interface
+        message = "LinearMovementScript added to " + this.node;
+        rigidbody;
+        speed = 1;
+        constructor() {
+            super();
+            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+                return;
+            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.addComponent);
+        }
+        addComponent = () => {
+            this.node.mtxLocal.translation = new ƒ.Vector3(this.getRandomFloat(2.2, 8, 2), this.getRandomFloat(-0.75, 0.85, 2), 0);
+            this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.straightMovement);
+            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.reposition);
+        };
+        straightMovement = () => {
+            let deltaTime = ƒ.Loop.timeFrameReal / 1000;
+            this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0, 0));
+        };
+        reposition = () => {
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -60, 2)) {
+                let yPos = this.getRandomFloat(-0.75, 0.85, 1);
+                this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
+            }
+        };
+        getRandomFloat(min, max, decimals) {
+            let str = (Math.random() * (max - min) + min).toFixed(decimals);
+            return parseFloat(str);
+        }
+    }
+    FlappyBug.LinearMovementScript = LinearMovementScript;
 })(FlappyBug || (FlappyBug = {}));
 var FlappyBug;
 (function (FlappyBug) {
@@ -324,16 +441,7 @@ var FlappyBug;
         root.appendChild(player);
         player.getComponent(ƒ.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, hndCollision, true);
         collectibles = root.getChildrenByName("Collectibles")[0];
-        coin = new FlappyBug.Coin();
-        collectibles.appendChild(coin);
-        heart = new FlappyBug.Heart();
-        collectibles.appendChild(heart);
         enemies = root.getChildrenByName("Enemies")[0];
-        enemy = new FlappyBug.Enemy();
-        enemies.appendChild(enemy);
-        enemy.addComponent(new FlappyBug.SineMovementScript);
-        coin.addComponent(new FlappyBug.LinearMovementScript);
-        heart.addComponent(new FlappyBug.LinearMovementScript);
         ƒ.Time.game.set(0);
         hud.style.visibility = "visible";
         gameState = new FlappyBug.GameState();
@@ -342,12 +450,27 @@ var FlappyBug;
         gameState.gameRunning = true;
         gameState.score = 0;
         gameState.setHealth();
+        spawnObjects();
         playSoundtrack();
         // canvas.requestPointerLock();
     }
     // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
     // Höhe Gegner * Random(Anzahl an Steps)
     function spawnObjects() {
+        for (let i = 0; i <= 5; i++) {
+            enemy = new FlappyBug.Enemy();
+            if (i % 2 == 0)
+                enemy.addComponent(new FlappyBug.SineMovementScript);
+            else
+                enemy.addComponent(new FlappyBug.LinearMovementScript);
+            enemies.appendChild(enemy);
+        }
+        coin = new FlappyBug.Coin();
+        collectibles.appendChild(coin);
+        coin.addComponent(new FlappyBug.CoinMovementScript);
+        heart = new FlappyBug.Heart();
+        collectibles.appendChild(heart);
+        heart.addComponent(new FlappyBug.HeartMovementScript);
     }
     function hndCollision(_event) {
         if (gameState.gameRunning != true)
@@ -473,45 +596,6 @@ var FlappyBug;
 var FlappyBug;
 (function (FlappyBug) {
     var ƒ = FudgeCore;
-    ƒ.Project.registerScriptNamespace(FlappyBug); // Register the namespace to FUDGE for serialization
-    class LinearMovementScript extends ƒ.ComponentScript {
-        // Register the script as component for use in the editor via drag&drop
-        static iSubclass = ƒ.Component.registerSubclass(LinearMovementScript);
-        // Properties may be mutated by users in the editor via the automatically created user interface
-        message = "LinearMovementScript added to " + this.node;
-        rigidbody;
-        speed = 1;
-        constructor() {
-            super();
-            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
-                return;
-            this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.addComponent);
-        }
-        addComponent = () => {
-            this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
-            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.straightMovement);
-            this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.reposition);
-        };
-        straightMovement = () => {
-            let deltaTime = ƒ.Loop.timeFrameReal / 1000;
-            this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0, 0));
-        };
-        reposition = () => {
-            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -30, 2)) {
-                let yPos = this.getRandomFloat(-0.75, 0.99, 1);
-                this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
-            }
-        };
-        getRandomFloat(min, max, decimals) {
-            let str = (Math.random() * (max - min) + min).toFixed(decimals);
-            return parseFloat(str);
-        }
-    }
-    FlappyBug.LinearMovementScript = LinearMovementScript;
-})(FlappyBug || (FlappyBug = {}));
-var FlappyBug;
-(function (FlappyBug) {
-    var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     class Player extends ƒ.Node {
         spriteNodeFly;
@@ -622,6 +706,7 @@ var FlappyBug;
             this.addEventListener("componentAdd" /* COMPONENT_ADD */, this.addComponent);
         }
         addComponent = () => {
+            this.node.mtxLocal.translation = new ƒ.Vector3(this.getRandomFloat(2.2, 8, 2), this.getRandomFloat(-0.75, 0.85, 2), 0);
             this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
             this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.sineMovement);
             this.node.addEventListener("renderPrepare" /* RENDER_PREPARE */, this.reposition);
@@ -631,7 +716,7 @@ var FlappyBug;
             this.rigidbody.translateBody(new ƒ.Vector3(-this.speed * deltaTime * FlappyBug.gameSpeed, 0.0015 * Math.sin(3 * this.rigidbody.getPosition().x), 0));
         };
         reposition = () => {
-            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -20, 2)) {
+            if (this.rigidbody.getPosition().x <= this.getRandomFloat(-2.2, -60, 2)) {
                 let yPos = this.getRandomFloat(-0.5, 0.75, 1);
                 this.rigidbody.setPosition(new ƒ.Vector3(2.2, yPos, 0));
             }

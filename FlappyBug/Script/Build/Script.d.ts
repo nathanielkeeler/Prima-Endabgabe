@@ -9,6 +9,20 @@ declare namespace FlappyBug {
         private initSprites;
     }
 }
+declare namespace FlappyBug {
+    import ƒ = FudgeCore;
+    class CoinMovementScript extends ƒ.ComponentScript {
+        static readonly iSubclass: number;
+        message: string;
+        private rigidbody;
+        private speed;
+        constructor();
+        addComponent: () => void;
+        straightMovement: () => void;
+        private reposition;
+        private getRandomFloat;
+    }
+}
 declare namespace Script {
     import ƒ = FudgeCore;
     class CustomComponentScript extends ƒ.ComponentScript {
@@ -59,7 +73,18 @@ declare namespace FlappyBug {
     }
 }
 declare namespace FlappyBug {
-    let gameSpeed: number;
+    import ƒ = FudgeCore;
+    class HeartMovementScript extends ƒ.ComponentScript {
+        static readonly iSubclass: number;
+        message: string;
+        private rigidbody;
+        private speed;
+        constructor();
+        addComponent: () => void;
+        straightMovement: () => void;
+        private reposition;
+        private getRandomFloat;
+    }
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;
@@ -74,6 +99,9 @@ declare namespace FlappyBug {
         private reposition;
         private getRandomFloat;
     }
+}
+declare namespace FlappyBug {
+    let gameSpeed: number;
 }
 declare namespace FlappyBug {
     import ƒ = FudgeCore;

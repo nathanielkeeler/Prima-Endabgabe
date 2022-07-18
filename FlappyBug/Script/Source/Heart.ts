@@ -22,7 +22,6 @@ namespace FlappyBug {
             this.addComponent(new ƒ.ComponentMesh(new ƒ.MeshCube("HeartMesh")));
             this.addComponent(new ƒ.ComponentMaterial(new ƒ.Material("HeartMaterial", ƒ.ShaderLit, new ƒ.CoatColored())));
             this.addComponent(new ƒ.ComponentTransform());
-            this.mtxLocal.translation = new ƒ.Vector3(0, 0.2, 0);
             this.mtxLocal.scaling = new ƒ.Vector3(0.1, 0.1, 0.1);
 
             this.rigidbody = new ƒ.ComponentRigidbody();
