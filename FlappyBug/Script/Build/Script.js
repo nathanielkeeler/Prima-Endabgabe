@@ -395,6 +395,7 @@ var FlappyBug;
     let player;
     let enemies;
     let enemy;
+    let enemyAmount;
     let collectibles;
     let coin;
     let heart;
@@ -425,7 +426,7 @@ var FlappyBug;
             // gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
             gameState.score = gametime;
         }
-        if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && FlappyBug.gameSpeed < 3) {
+        if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && FlappyBug.gameSpeed < 3.2) {
             document.dispatchEvent(new Event("increaseGameSpeed"));
         }
         document.addEventListener("increaseGameSpeed", increaseGameSpeed);
@@ -454,10 +455,12 @@ var FlappyBug;
         playSoundtrack();
         // canvas.requestPointerLock();
     }
-    // Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
-    // Höhe Gegner * Random(Anzahl an Steps)
     function spawnObjects() {
-        for (let i = 0; i <= 5; i++) {
+        if (enemyAmount < 3)
+            enemyAmount = 3;
+        if (enemyAmount < 7)
+            enemyAmount = 7;
+        for (let i = 0; i <= enemyAmount; i++) {
             enemy = new FlappyBug.Enemy();
             if (i % 2 == 0)
                 enemy.addComponent(new FlappyBug.SineMovementScript);
@@ -465,9 +468,11 @@ var FlappyBug;
                 enemy.addComponent(new FlappyBug.LinearMovementScript);
             enemies.appendChild(enemy);
         }
-        coin = new FlappyBug.Coin();
-        collectibles.appendChild(coin);
-        coin.addComponent(new FlappyBug.CoinMovementScript);
+        for (let i = 0; i < 2; i++) {
+            coin = new FlappyBug.Coin();
+            collectibles.appendChild(coin);
+            coin.addComponent(new FlappyBug.CoinMovementScript);
+        }
         heart = new FlappyBug.Heart();
         collectibles.appendChild(heart);
         heart.addComponent(new FlappyBug.HeartMovementScript);
@@ -512,6 +517,7 @@ var FlappyBug;
         let data = await fetchData();
         let fetchedHighscore = data["startHighscore"];
         startSpeed = data["startSpeed"];
+        enemyAmount = data["enemyAmount"];
         gameState.hScore = window.localStorage.getItem("Highscore");
         if (fetchedHighscore > gameState.hScore)
             gameState.hScore = fetchedHighscore;
@@ -562,7 +568,6 @@ var FlappyBug;
         viewport.camera.mtxPivot.translateZ(4.5);
         viewport.camera.mtxPivot.rotateY(180);
     }
-    // Imported the following two functions from index.html
     function init(_event) {
         hud = document.getElementById("HUD");
         hud.style.visibility = "hidden";

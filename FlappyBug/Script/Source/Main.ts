@@ -1,40 +1,31 @@
 namespace FlappyBug {
 	import ƒ = FudgeCore;
 
-	interface ExternalData {
-		[name: string]: number;
-	}
+	interface ExternalData {[name: string]: number;}
 	let externalData: ExternalData;
-
 	let viewport: ƒ.Viewport;
 	let canvas: HTMLCanvasElement;
 	let hud: HTMLElement;
 	let root: ƒ.Node;
 	let sky: ƒ.Node;
 	let ground: ƒ.Node;
-
 	let player: Player;
-
 	let enemies: ƒ.Node;
 	let enemy: ƒ.Node;
-
+	let enemyAmount: number;
 	let collectibles: ƒ.Node;
 	let coin: Coin;
 	let heart: Heart;
-
 	let gameState: GameState;
 	export let gameSpeed: number;
 	let startSpeed: number;
-
 	let audio: ƒ.Node;
 	let soundtrack: ƒ.ComponentAudio;
-
 	let gametime: number;
-
 	let dialog: HTMLDialogElement;
+
 	window.addEventListener("load", init);
 	document.addEventListener("interactiveViewportStarted", <EventListener><any>start);
-
 
 	async function start(_event: CustomEvent): Promise<void> {
 		initViewport(_event);
@@ -59,7 +50,7 @@ namespace FlappyBug {
 			// gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
 			gameState.score = gametime;
 		}
-		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && gameSpeed < 3) {
+		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && gameSpeed < 3.2) {
 			document.dispatchEvent(new Event("increaseGameSpeed"));
 		}
 		document.addEventListener("increaseGameSpeed", increaseGameSpeed);
@@ -67,7 +58,6 @@ namespace FlappyBug {
 		viewport.draw();
 		ƒ.AudioManager.default.update();
 	}
-
 
 	async function initGame(): Promise<void> {
 		root = viewport.getBranch();
@@ -95,10 +85,13 @@ namespace FlappyBug {
 		// canvas.requestPointerLock();
 	}
 
-	// Höhe Spielfeld / Höhe Gegner = Anzahl an Steps
-	// Höhe Gegner * Random(Anzahl an Steps)
 	function spawnObjects(): void {
-		for(let i=0; i <= 5; i++) {
+		if(enemyAmount < 3)
+			enemyAmount = 3;
+		if(enemyAmount < 7)
+			enemyAmount = 7;
+			
+		for(let i=0; i <= enemyAmount; i++) {
 			enemy = new Enemy();
 
 			if(i%2 == 0)
@@ -109,9 +102,11 @@ namespace FlappyBug {
 			enemies.appendChild(enemy);
 		}
 
-		coin = new Coin();
-		collectibles.appendChild(coin);
-		coin.addComponent(new CoinMovementScript);
+		for(let i=0; i<2; i++) {
+			coin = new Coin();
+			collectibles.appendChild(coin);
+			coin.addComponent(new CoinMovementScript);
+		}
 
 		heart = new Heart();
 		collectibles.appendChild(heart);
@@ -166,6 +161,7 @@ namespace FlappyBug {
 
 		let fetchedHighscore: number = data["startHighscore"];
 		startSpeed = data["startSpeed"];
+		enemyAmount = data["enemyAmount"];
 
 		gameState.hScore = <number><unknown>window.localStorage.getItem("Highscore")
 		if (fetchedHighscore > gameState.hScore)
@@ -222,8 +218,6 @@ namespace FlappyBug {
 		viewport.camera.mtxPivot.rotateY(180);
 	}
 
-
-	// Imported the following two functions from index.html
 	function init(_event: Event) {
 		hud = document.getElementById("HUD");
 		hud.style.visibility = "hidden";
@@ -237,6 +231,7 @@ namespace FlappyBug {
 		//@ts-ignore
 		dialog.showModal();
 	}
+
 	async function startInteractiveViewport(): Promise<void> {
 		await ƒ.Project.loadResourcesFromHTML();
 		ƒ.Debug.log("Project:", ƒ.Project.resources);

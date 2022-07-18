@@ -1,4 +1,5 @@
 {
     "startSpeed": 1,
+    "enemyAmount": 5,
     "startHighscore": 10
 }
