@@ -24,6 +24,7 @@ namespace FlappyBug {
 	let gameTime: number;
 	let counter: number;
 	let dialog: HTMLDialogElement;
+	let endStatsDiv: HTMLDivElement;
 
 	window.addEventListener("load", init);
 	document.addEventListener("interactiveViewportStarted", <EventListener><unknown>start);
@@ -135,6 +136,7 @@ namespace FlappyBug {
 
 				saveData();
 				ƒ.Loop.stop();
+				endStats();
 			}
 		} else if (obstacle.name == "Coin") {
 			counter += 25;
@@ -157,8 +159,12 @@ namespace FlappyBug {
 		gameSpeed += 0.015;
 	}
 
-	function endGame(): void {
+	function endStats(): void {
+		endStatsDiv.setAttribute("class", "end-stats-show");
 
+		let stats: HTMLParagraphElement = document.createElement("p");
+		stats.innerHTML = "Game over <br><br> Your score: " + gameState.score + "<br>Highscore: " + gameState.hScore + "<br><br> Reload to try again.";
+		endStatsDiv.appendChild(stats);
 	}
 
 	async function getData() {
@@ -226,6 +232,8 @@ namespace FlappyBug {
 	function init(_event: Event) {
 		hud = document.getElementById("HUD");
 		hud.style.visibility = "hidden";
+		endStatsDiv = <HTMLDivElement>document.querySelector("#end-stats");
+		endStatsDiv.setAttribute("class", "end-stats-hide");
 		dialog = document.querySelector("dialog");
 		dialog.querySelector("h1").textContent = document.title;
 		dialog.addEventListener("click", function (_event) {

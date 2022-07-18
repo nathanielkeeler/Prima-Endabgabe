@@ -406,6 +406,7 @@ var FlappyBug;
     let gameTime;
     let counter;
     let dialog;
+    let endStatsDiv;
     window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
     async function start(_event) {
@@ -492,6 +493,7 @@ var FlappyBug;
                 player.addChild(player.spriteNodeCrash);
                 saveData();
                 ƒ.Loop.stop();
+                endStats();
             }
         }
         else if (obstacle.name == "Coin") {
@@ -511,7 +513,11 @@ var FlappyBug;
     function increaseGameSpeed() {
         FlappyBug.gameSpeed += 0.015;
     }
-    function endGame() {
+    function endStats() {
+        endStatsDiv.setAttribute("class", "end-stats-show");
+        let stats = document.createElement("p");
+        stats.innerHTML = "Game over <br><br> Your score: " + gameState.score + "<br>Highscore: " + gameState.hScore + "<br><br> Reload to try again.";
+        endStatsDiv.appendChild(stats);
     }
     async function getData() {
         let data = await fetchData();
@@ -571,6 +577,8 @@ var FlappyBug;
     function init(_event) {
         hud = document.getElementById("HUD");
         hud.style.visibility = "hidden";
+        endStatsDiv = document.querySelector("#end-stats");
+        endStatsDiv.setAttribute("class", "end-stats-hide");
         dialog = document.querySelector("dialog");
         dialog.querySelector("h1").textContent = document.title;
         dialog.addEventListener("click", function (_event) {
