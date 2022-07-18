@@ -403,15 +403,13 @@ var FlappyBug;
     let startSpeed;
     let audio;
     let soundtrack;
-    let gametime;
+    let gameTime;
+    let counter;
     let dialog;
     window.addEventListener("load", init);
     document.addEventListener("interactiveViewportStarted", start);
     async function start(_event) {
         initViewport(_event);
-        window.addEventListener("resize", () => {
-            canvas.width = window.innerWidth;
-        });
         await initGame();
         ƒ.AudioManager.default.listenTo(root);
         ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
@@ -419,13 +417,15 @@ var FlappyBug;
     }
     function update(_event) {
         ƒ.Physics.simulate();
-        // let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-        gametime = Math.floor(ƒ.Time.game.get() / 1000);
+        gameTime = Math.floor(ƒ.Time.game.get() / 1000);
+        if (gameTime % 1 == 0) {
+            counter += 0.01;
+        }
         if (gameState.gameRunning == true) {
             animateBackground();
-            // gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
-            gameState.score = gametime;
+            gameState.score = Math.floor(counter);
         }
+        // Increases Gamespeed
         if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && FlappyBug.gameSpeed < 3.2) {
             document.dispatchEvent(new Event("increaseGameSpeed"));
         }
@@ -449,6 +449,7 @@ var FlappyBug;
         await getData();
         FlappyBug.gameSpeed = startSpeed;
         gameState.gameRunning = true;
+        counter = 0;
         gameState.score = 0;
         gameState.setHealth();
         spawnObjects();
@@ -481,7 +482,6 @@ var FlappyBug;
         if (gameState.gameRunning != true)
             return;
         let obstacle = _event.cmpRigidbody.node;
-        console.log(obstacle.name);
         if (obstacle.name == "Enemy" || obstacle.name == "Ground_Trigger") {
             playAudio("hit").play(true);
             if (gameState.reduceHealth() == 0) {
@@ -490,14 +490,12 @@ var FlappyBug;
                 playAudio("hit").play(false);
                 player.removeChild(player.spriteNodeFly);
                 player.addChild(player.spriteNodeCrash);
-                console.log("Your Score: " + gameState.score);
                 saveData();
                 ƒ.Loop.stop();
             }
         }
         else if (obstacle.name == "Coin") {
-            gameState.score = gametime + 50;
-            // gametime and coin system need fixing
+            counter += 25;
             playAudio("coin").play(true);
         }
         else if (obstacle.name == "Heart") {
@@ -512,6 +510,8 @@ var FlappyBug;
     }
     function increaseGameSpeed() {
         FlappyBug.gameSpeed += 0.015;
+    }
+    function endGame() {
     }
     async function getData() {
         let data = await fetchData();

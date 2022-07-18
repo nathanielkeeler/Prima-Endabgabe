@@ -1,7 +1,7 @@
 namespace FlappyBug {
 	import ƒ = FudgeCore;
 
-	interface ExternalData {[name: string]: number;}
+	interface ExternalData { [name: string]: number; }
 	let externalData: ExternalData;
 	let viewport: ƒ.Viewport;
 	let canvas: HTMLCanvasElement;
@@ -21,17 +21,15 @@ namespace FlappyBug {
 	let startSpeed: number;
 	let audio: ƒ.Node;
 	let soundtrack: ƒ.ComponentAudio;
-	let gametime: number;
+	let gameTime: number;
+	let counter: number;
 	let dialog: HTMLDialogElement;
 
 	window.addEventListener("load", init);
-	document.addEventListener("interactiveViewportStarted", <EventListener><any>start);
+	document.addEventListener("interactiveViewportStarted", <EventListener><unknown>start);
 
 	async function start(_event: CustomEvent): Promise<void> {
 		initViewport(_event);
-		window.addEventListener("resize", () => {
-			canvas.width = window.innerWidth;
-		});
 
 		await initGame();
 
@@ -42,14 +40,19 @@ namespace FlappyBug {
 
 	function update(_event: Event): void {
 		ƒ.Physics.simulate();
-		// let deltaTime: number = ƒ.Loop.timeFrameReal / 1000;
-		gametime = Math.floor(ƒ.Time.game.get() / 1000);
+
+		gameTime = Math.floor(ƒ.Time.game.get() / 1000);
+
+		if (gameTime % 1 == 0) {
+			counter += 0.01;
+		}
 
 		if (gameState.gameRunning == true) {
 			animateBackground();
-			// gameState.score = Math.floor(ƒ.Time.game.get() / 1000);
-			gameState.score = gametime;
+			gameState.score = Math.floor(counter);
 		}
+
+		// Increases Gamespeed
 		if (ƒ.Time.game.get() % 10 == 0 && gameState.score != 0 && gameSpeed < 3.2) {
 			document.dispatchEvent(new Event("increaseGameSpeed"));
 		}
@@ -69,13 +72,14 @@ namespace FlappyBug {
 		player.getComponent(ƒ.ComponentRigidbody).addEventListener(ƒ.EVENT_PHYSICS.TRIGGER_ENTER, hndCollision, true);
 		collectibles = root.getChildrenByName("Collectibles")[0];
 		enemies = root.getChildrenByName("Enemies")[0];
-		
+
 		ƒ.Time.game.set(0);
 		hud.style.visibility = "visible";
 		gameState = new GameState();
 		await getData();
 		gameSpeed = startSpeed;
 		gameState.gameRunning = true;
+		counter = 0;
 		gameState.score = 0;
 		gameState.setHealth();
 
@@ -86,15 +90,15 @@ namespace FlappyBug {
 	}
 
 	function spawnObjects(): void {
-		if(enemyAmount < 3)
+		if (enemyAmount < 3)
 			enemyAmount = 3;
-		if(enemyAmount > 7)
+		if (enemyAmount > 7)
 			enemyAmount = 7;
 
-		for(let i=0; i <= enemyAmount; i++) {
+		for (let i = 0; i <= enemyAmount; i++) {
 			enemy = new Enemy();
 
-			if(i%2 == 0)
+			if (i % 2 == 0)
 				enemy.addComponent(new SineMovementScript);
 			else
 				enemy.addComponent(new LinearMovementScript);
@@ -102,7 +106,7 @@ namespace FlappyBug {
 			enemies.appendChild(enemy);
 		}
 
-		for(let i=0; i<2; i++) {
+		for (let i = 0; i < 2; i++) {
 			coin = new Coin();
 			collectibles.appendChild(coin);
 			coin.addComponent(new CoinMovementScript);
@@ -118,7 +122,6 @@ namespace FlappyBug {
 			return;
 
 		let obstacle: ƒ.Node = _event.cmpRigidbody.node;
-		console.log(obstacle.name);
 
 		if (obstacle.name == "Enemy" || obstacle.name == "Ground_Trigger") {
 			playAudio("hit").play(true);
@@ -130,13 +133,11 @@ namespace FlappyBug {
 				player.removeChild(player.spriteNodeFly);
 				player.addChild(player.spriteNodeCrash);
 
-				console.log("Your Score: " + gameState.score);
 				saveData();
 				ƒ.Loop.stop();
 			}
 		} else if (obstacle.name == "Coin") {
-			gameState.score = gametime + 50;
-			// gametime and coin system need fixing
+			counter += 25;
 			playAudio("coin").play(true);
 
 		} else if (obstacle.name == "Heart") {
@@ -154,6 +155,10 @@ namespace FlappyBug {
 
 	function increaseGameSpeed(): void {
 		gameSpeed += 0.015;
+	}
+
+	function endGame(): void {
+
 	}
 
 	async function getData() {
