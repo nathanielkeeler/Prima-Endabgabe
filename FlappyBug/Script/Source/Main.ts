@@ -88,9 +88,9 @@ namespace FlappyBug {
 	function spawnObjects(): void {
 		if(enemyAmount < 3)
 			enemyAmount = 3;
-		if(enemyAmount < 7)
+		if(enemyAmount > 7)
 			enemyAmount = 7;
-			
+
 		for(let i=0; i <= enemyAmount; i++) {
 			enemy = new Enemy();
 
