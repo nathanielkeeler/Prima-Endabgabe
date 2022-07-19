@@ -516,7 +516,7 @@ var FlappyBug;
     function endStats() {
         endStatsDiv.setAttribute("class", "end-stats-show");
         let stats = document.createElement("p");
-        stats.innerHTML = "Game over <br><br> Your score: " + gameState.score + "<br>Highscore: " + gameState.hScore + "<br><br> Reload to try again.";
+        stats.innerHTML = "Game over <br><br> Your score: " + gameState.score + "<br>Highscore: " + gameState.hScore;
         endStatsDiv.appendChild(stats);
     }
     async function getData() {

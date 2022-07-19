@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <title>FlappyBug</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
 
     <!--Editor settings of this project-->
-    <meta type="settings" autoview="Graph|2022-04-08T13:27:53.880Z|73360" project="{'name':'FlappyBug','includeAutoViewScript':false,'graphAutoView':'Graph|2022-04-08T13:27:53.880Z|73360'}" panels="[{'type':'PanelProject','state':{}},{'type':'PanelGraph','state':{'graph':'Graph|2022-04-08T13:27:53.880Z|73360'}}]" />
+    <meta type="settings" autoview="Graph|2022-04-08T13:27:53.880Z|73360"
+        project="{'name':'FlappyBug','includeAutoViewScript':false,'graphAutoView':'Graph|2022-04-08T13:27:53.880Z|73360'}"
+        panels="[{'type':'PanelProject','state':{}},{'type':'PanelGraph','state':{'graph':'Graph|2022-04-08T13:27:53.880Z|73360'}}]" />
 
     <!--Activate the following line to include the FUDGE-version of Oimo-Physics. You may want to download a local copy to work offline and be independent from future changes!-->
     <script type="text/javascript" src="../Fudge/Physics/OimoPhysics.js"></script>
@@ -84,6 +87,8 @@
     <dialog>
         <h1>Title (will be replaced by autoView)</h1>
         <h3>Try not to get eaten and don't crash!</h3>
+        <p>The game will get faster as you progress.</p> <br>
+        <p>Hold 'SPACE' to fly.</p>
         <p>Click to start!</p>
     </dialog>
     <!--Canvas for FUDGE to render to-->
@@ -92,7 +97,8 @@
 
     <div id="HUD">
         <div class="score">
-            <text>Score</text> <input key="score" id="score" type="number" min="0" max="9999" value="1" step="1" disabled="" />
+            <text>Score</text> <input key="score" id="score" type="number" min="0" max="9999" value="1" step="1"
+                disabled="" />
         </div>
         <div class="hearts">
             <text>Health</text>
@@ -101,11 +107,13 @@
             <img id="heart3" src="Assets/images/sprites/heart.png" alt="heart3" />
         </div>
         <div class="highscore">
-            <text>Highscore</text> <input type="number" key="hScore" min="0" max="9999" value="0" step="1" disabled="" />
+            <text>Highscore</text> <input type="number" key="hScore" min="0" max="9999" value="0" step="1"
+                disabled="" />
         </div>
     </div>
     <div id="end-stats" class="end-stats-show">
-
+        <button class="restart-button" onClick="window.location.reload();">Restart</button>
     </div>
 </body>
+
 </html>
