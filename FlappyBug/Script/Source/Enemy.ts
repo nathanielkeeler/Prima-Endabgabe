@@ -11,13 +11,7 @@ namespace FlappyBug {
         constructor() {
             super("Enemy");
             this.initEnemy();
-
-            ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.updateEnemy);
         }
-
-        private updateEnemy = (_event: Event) => {
-        }
-
 
         private async initEnemy(): Promise<void> {
             await this.initEnemyBodyandPosition();
